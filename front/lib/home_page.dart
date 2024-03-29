@@ -6,7 +6,8 @@ class SerpentCurve extends StatelessWidget {
   final double curveHeight;
   final double padding;
 
-  SerpentCurve({
+  const SerpentCurve({
+    super.key,
     required this.color,
     required this.strokeWidth,
     required this.curveHeight,
@@ -68,17 +69,19 @@ class SerpentPainter extends CustomPainter {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-          Color(0xFFFDF6EC), // Set background color for the whole screen
+          const Color(0xFFFDF6EC), // Set background color for the whole screen
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 150),
-            Text(
+            const SizedBox(height: 150),
+            const Text(
               'SafePick',
               style: TextStyle(
                 fontSize: 54,
@@ -86,14 +89,14 @@ class HomePage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 90), // Add space between title and image
+            const SizedBox(height: 90), // Add space between title and image
             Image.asset(
               'assets/images/logo.png', // Replace 'your_image.png' with your image file path
               width: 230, // Set width of the image
               height: 230, // Set height of the image
               fit: BoxFit.cover, // Adjust how the image fits into the container
             ),
-            SizedBox(height: 50), // Add space between logo and button
+            const SizedBox(height: 50), // Add space between logo and button
             ElevatedButton(
               onPressed: () {
                 const String secondPageRoute = '/second';
@@ -101,14 +104,14 @@ class HomePage extends StatelessWidget {
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
-                    Color(0xFFECBE5C)), // Set the background color here
+                    const Color(0xFFECBE5C)), // Set the background color here
                 padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  EdgeInsets.symmetric(
+                  const EdgeInsets.symmetric(
                       horizontal: 50.0,
                       vertical: 13.0), // Adjust the padding as needed
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Start Now  \u2192',
                 style: TextStyle(
                   fontSize: 20,
@@ -118,8 +121,8 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 50),
-            Text(
+            const SizedBox(height: 50),
+            const Text(
               'DECODE THE BLEND',
               style: TextStyle(
                 fontSize: 23,
@@ -127,16 +130,16 @@ class HomePage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 1),
-            Text(
+            const SizedBox(height: 1),
+            const Text(
               'Where Consumption Meets Evaluation',
               style: TextStyle(
                 fontSize: 18,
                 fontFamily: 'Harmonia',
               ),
             ),
-            SizedBox(height: 10), // Add some space before the Divider
-            SerpentCurve(
+            const SizedBox(height: 10), // Add some space before the Divider
+            const SerpentCurve(
               color: Color(0xFFECBE5C), // Set the color of the serpent curve
               strokeWidth: 2.5, // Set the thickness of the serpent curve
               curveHeight: 50,
@@ -151,32 +154,32 @@ class HomePage extends StatelessWidget {
           Positioned(
             top: 140,
             left: 50,
-            child: _buildCircle(Color(0xFFECBE5C), 40),
+            child: _buildCircle(const Color(0xFFECBE5C), 40),
           ),
           Positioned(
             top: 50,
             right: 10,
-            child: _buildCircle(Color(0xFFECBE5C), 100),
+            child: _buildCircle(const Color(0xFFECBE5C), 100),
           ),
           Positioned(
             top: 250,
             right: 230,
-            child: _buildCircle(Color(0xFFECBE5C), 15),
+            child: _buildCircle(const Color(0xFFECBE5C), 15),
           ),
           Positioned(
             top: 250,
             left: 60,
-            child: _buildCircle(Color(0xFF5CB287), 70),
+            child: _buildCircle(const Color(0xFF5CB287), 70),
           ),
           Positioned(
             top: 240,
             right: 50,
-            child: _buildCircle(Color(0xFF5CB287), 30),
+            child: _buildCircle(const Color(0xFF5CB287), 30),
           ),
           Positioned(
             top: 130,
             right: 150,
-            child: _buildCircle(Color(0xFF5CB287), 15),
+            child: _buildCircle(const Color(0xFF5CB287), 15),
           ),
         ],
       ),
