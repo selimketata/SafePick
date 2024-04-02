@@ -204,7 +204,7 @@ class Signin extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    Signup()), // Replace 'RegistrationPage()' with your registration page widget
+                                     Signup ()), // Replace 'RegistrationPage()' with your registration page widget
                           );
                         },
                         child: Text(

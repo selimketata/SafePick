@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import './page1.dart';
 import 'sign in.dart';
+
 // Import the page you want to navigate to
 
 void main() => runApp(MyApp());
@@ -26,7 +27,7 @@ class _LiquidSwipePageState extends State<LiquidSwipePage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [FirstPage(), SecondPage(), ThirdPage(), Signin()];
+    final pages = [Signin(),FirstPage(), SecondPage(), ThirdPage(), Signin()];
 
     return Scaffold(
       body: LiquidSwipe(
