@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/second': (context) => const SecondPage(),
         '/chatbot': (context) => const chatbot(),
         '/cosmetic': (context) => const cosmetic(),
-        '/scan': (context) => const scan(),
+        '/scan': (context) => const ScanApp(),
         '/food': (context) => const food(),
         '/community': (context) => const community(),
       },

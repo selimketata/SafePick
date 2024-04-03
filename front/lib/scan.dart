@@ -1,24 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 void main() {
-  runApp(const scan());
+  runApp(const ScanApp());
 }
 
-class scan extends StatelessWidget {
-  const scan({super.key});
+class ScanApp extends StatelessWidget {
+  const ScanApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('scan'),
-        ),
-        body: const Center(
-          child: Text(
-            'scan',
-            style: TextStyle(fontSize: 24),
-          ),
+      home: const ScanPage(),
+    );
+  }
+}
+
+class ScanPage extends StatelessWidget {
+  const ScanPage({Key? key}) : super(key: key);
+
+  Future<void> scan() async {
+    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666',
+      'Cancel',
+      true,
+      ScanMode.BARCODE,
+    );
+
+    print("Barcode: $barcodeScanRes");
+    // Do whatever you want with the scanned barcode
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scan'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: scan,
+          child: const Text('Scan'),
         ),
       ),
     );
