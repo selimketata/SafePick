@@ -67,17 +67,17 @@ class Rectangle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 20.0, // Adjust width as needed
-      height: 20.0, // Adjust height as needed
+      width: 20.0, 
+      height: 20.0, 
       margin: EdgeInsets.only(
-          bottom: 40.0, left: 10.0, right: 10), // Adjust margin as needed
+          bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
             ? Color(0xFF5CB287)
-            : Colors.white, // Change colors as needed
+            : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
-            Border.all(color: Colors.black), // Adjust border radius as needed
+            Border.all(color: Colors.black), 
       ),
     );
   }
@@ -91,17 +91,17 @@ class Rectangletwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 20.0, // Adjust width as needed
-      height: 20.0, // Adjust height as needed
+      width: 20.0, 
+      height: 20.0, 
       margin: EdgeInsets.only(
-          bottom: 40.0, left: 10.0, right: 10), // Adjust margin as needed
+          bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
             ? Color(0xFF5CB287)
-            : Colors.white, // Change colors as needed
+            : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
-            Border.all(color: Colors.black), // Adjust border radius as needed
+            Border.all(color: Colors.black), 
       ),
     );
   }
@@ -115,17 +115,17 @@ class Rectanglethree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 20.0, // Adjust width as needed
-      height: 20.0, // Adjust height as needed
+      width: 20.0,
+      height: 20.0, 
       margin: EdgeInsets.only(
-          bottom: 40.0, left: 10.0, right: 10), // Adjust margin as needed
+          bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
             ? Color.fromRGBO(238, 166, 66, 1)
-            : Colors.white, // Change colors as needed
+            : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
-            Border.all(color: Colors.black), // Adjust border radius as needed
+            Border.all(color: Colors.black), 
       ),
     );
   }
@@ -151,10 +151,10 @@ class FirstPage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to page2
+                    
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Signin()),
+                      MaterialPageRoute(builder: (context) => SignIn()),
                     );
                   },
                   child: Text(
@@ -192,11 +192,11 @@ class FirstPage extends StatelessWidget {
           ),
           Row(
             children: <Widget>[
-              SizedBox(width: 20.0), // Espace au début de la rangée
+              SizedBox(width: 20.0), 
               Rectangle(active: true),
-              SizedBox(width: 6.0), // Espace entre les rectangles
+              SizedBox(width: 6.0), 
               Rectangle(active: false),
-              SizedBox(width: 6.0), // Espace entre les rectangles
+              SizedBox(width: 6.0), 
               Rectangle(active: false),
             ],
           )
@@ -226,10 +226,10 @@ class SecondPage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to page2
+                    
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Signin()),
+                      MaterialPageRoute(builder: (context) => SignIn()),
                     );
                   },
                   child: Text(
@@ -242,14 +242,14 @@ class SecondPage extends StatelessWidget {
           ),
           Center(
             child: Container(
-              width: 230, // Adjust width as needed
-              height: 300, // Adjust height as needed
+              width: 230, 
+              height: 300, 
               child: Image.asset("assets/images/img_image_1.png"),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(
-                left: 20.0, right: 30.0, top: 10), // Adjust padding here
+                left: 20.0, right: 30.0, top: 10), 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -262,7 +262,7 @@ class SecondPage extends StatelessWidget {
                   style: boldStyle,
                 ),
                 SizedBox(
-                  height: 10.0, // Adjusted height for closer spacing
+                  height: 10.0, 
                 ),
                 Text(
                   "Insightful rating based on the quality\n"
@@ -275,14 +275,14 @@ class SecondPage extends StatelessWidget {
           ),
           SizedBox(
               height:
-                  5.0), // Space between text and the row of rectangles, adjusted for closer spacing
+                  5.0), 
           Row(
             children: <Widget>[
-              SizedBox(width: 20.0), // Espace au début de la rangée
+              SizedBox(width: 20.0), 
               Rectangletwo(active: false),
-              SizedBox(width: 6.0), // Espace entre les rectangles
+              SizedBox(width: 6.0), 
               Rectangletwo(active: true),
-              SizedBox(width: 6.0), // Espace entre les rectangles
+              SizedBox(width: 6.0), 
               Rectangletwo(active: false),
             ],
           ),
@@ -315,7 +315,7 @@ class ThirdPage extends StatelessWidget {
                     // Navigate to page2
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Signin()),
+                      MaterialPageRoute(builder: (context) => SignIn()),
                     );
                   },
                   child: Text(

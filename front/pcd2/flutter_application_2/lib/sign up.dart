@@ -50,7 +50,7 @@ class _SignupState extends State<Signup> {
       setState(() {
         selectedAvatar = avatar;
         _image = File(
-            avatar); // Assuming avatar holds the path of the selected image
+            avatar); 
       });
     }
   }
@@ -61,7 +61,7 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    // Validate email field
+    
     if (_emailController.text.isEmpty) {
       _showErrorDialog(context, 'Email field is empty.');
       return;
@@ -71,7 +71,7 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    // Validate password field
+    
     if (_passwordController.text.isEmpty) {
       _showErrorDialog(context, 'Password field is empty.');
       return;
@@ -81,19 +81,19 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    // Check if confirm password field is empty
+    
     if (_confirmPasswordController.text.isEmpty) {
       _showErrorDialog(context, 'Confirm password field is empty.');
       return;
     }
 
-    // Check if avatar is not selected
+    
     if (_image == null) {
       _showErrorDialog(context, 'Avatar is not selected.');
       return;
     }
 
-    // Check if passwords match
+    
     if (_passwordController.text != _confirmPasswordController.text) {
       showDialog(
         context: context,
@@ -153,6 +153,10 @@ class _SignupState extends State<Signup> {
           );
         },
       );
+    _nameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
     } else {
       showDialog(
         context: context,
@@ -207,8 +211,8 @@ class _SignupState extends State<Signup> {
             : AssetImage('assets/icons/default_avatar.png'),
       ),
       Positioned(
-        top: 80, // Adjust the top position as needed
-        left: 80, // Adjust the right position as needed
+        top: 80, 
+        left: 80, 
         child: IconButton(
           icon: Icon(Icons.add_a_photo),
           onPressed: () {
@@ -388,7 +392,7 @@ class _SignupState extends State<Signup> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Signin()),
+                      MaterialPageRoute(builder: (context) => SignIn()),
                     );
                   },
                   child: Text(

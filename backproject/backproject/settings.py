@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'backproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'pcd',
+        'NAME': 'pcdsasou',
     }
 }
 

@@ -1,31 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'sign up.dart';
 
-class Signin extends StatelessWidget {
+class SignIn extends StatefulWidget {
+  @override
+  _SignInState createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final String apiUrl = 'http://10.0.2.2:8000/sahrr/login/';
+
+  Future<void> _signIn() async {
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': _emailController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        
+        print('Login successful');
+        _emailController.clear();
+    _passwordController.clear();
+      } else {
+      
+        _showErrorDialog(context, 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      print('Error: $error');
+      _showErrorDialog(context, 'An error occurred. Please try again later.');
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-   
-      backgroundColor: Color(0xFFFDF6EC), // Set background color
-      body: Stack(
+      backgroundColor: Color(0xFFFDF6EC), 
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(), 
+          child: Stack(
         children: [
           Positioned(
             top: 0,
             left: 0,
             child: Container(
               width: screenWidth,
-              height: screenWidth / 3.4, // Adjust as needed
+              height: screenWidth / 3.4, 
               child: Image.asset(
-                'assets/images/Vector.png', // Replace with your photo asset
-                fit: BoxFit.cover, // Ensure the image covers the container
+                'assets/images/Vector.png', 
+                fit: BoxFit.cover, 
               ),
             ),
           ),
           Positioned(
-            top: screenWidth / 3.4 +
-                29, // Position below the image with additional padding
+            top: screenWidth / 3.4 + 29, 
             left: 0,
             right: 0,
             child: Column(
@@ -47,7 +108,7 @@ class Signin extends StatelessWidget {
                     'Sign in',
                     style: TextStyle(
                       fontSize: 30,
-                      fontWeight: FontWeight.w500, // Medium font weight
+                      fontWeight: FontWeight.w500, 
                     ),
                   ),
                 ),
@@ -58,52 +119,46 @@ class Signin extends StatelessWidget {
                     'Please fill the credentials',
                     style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.w600, // Semi-bold font weight
-                      color: Colors.grey, // Gray color
+                      fontWeight: FontWeight.w600, 
+                      color: Colors.grey, 
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20),
+         const  SizedBox(height: 100),
           Padding(
-            padding: EdgeInsets.only(
-                top: screenWidth / 3.4 + 120), // Adjust top padding
+            padding: EdgeInsets.only(top: screenWidth / 1.7 + 120), 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          screenWidth * 0.1), // Adjust horizontal padding
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1), 
                   child: Container(
-                    width: screenWidth * 0.8, // Adjust width to be bigger
-                    height: 60, // Adjust height to be bigger
+                    width: screenWidth * 0.8, 
+                    height: 60, 
                     decoration: BoxDecoration(
-                      color: Colors.white, // White background
-                      borderRadius: BorderRadius.circular(30), // Oval shape
+                      color: Colors.white, 
+                      borderRadius: BorderRadius.circular(30), 
                     ),
                     child: Row(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0),
                           child: Icon(
-                            Icons
-                                .alternate_email_sharp, // Use your photo asset here
-                            // Color of the icon
+                            Icons.alternate_email_sharp, 
+                          
                           ),
                         ),
-                        SizedBox(
-                            width:
-                                10), // Add spacing between icon and text field
+                        SizedBox(width: 20), 
                         Expanded(
                           child: TextField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                               labelText: 'Enter your email',
-                              border: InputBorder.none, // Hide border
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 20), // Adjust padding
+                              border: InputBorder.none, 
+                              contentPadding: EdgeInsets.symmetric(horizontal: 20), 
                             ),
                           ),
                         ),
@@ -113,36 +168,32 @@ class Signin extends StatelessWidget {
                 ),
                 SizedBox(height: 30),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          screenWidth * 0.1), // Adjust horizontal padding
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1), 
                   child: Container(
-                    width: screenWidth * 0.8, // Adjust width to be bigger
-                    height: 60, // Adjust height to be bigger
+                    width: screenWidth * 0.8, 
+                    height: 60, 
                     decoration: BoxDecoration(
-                      color: Colors.white, // White background
-                      borderRadius: BorderRadius.circular(30), // Oval shape
+                      color: Colors.white, 
+                      borderRadius: BorderRadius.circular(30), 
                     ),
                     child: Row(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 20.0),
                           child: Icon(
-                            Icons.lock, // Use your photo asset here
-                            // Color of the icon
+                            Icons.lock, 
+                            
                           ),
                         ),
-                        SizedBox(
-                            width:
-                                10), // Add spacing between icon and text field
+                        SizedBox(width: 10), 
                         Expanded(
                           child: TextField(
-                            obscureText: true, // Hide password
+                            controller: _passwordController,
+                            obscureText: true, 
                             decoration: InputDecoration(
                               labelText: 'Enter password',
-                              border: InputBorder.none, // Hide border
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 20), // Adjust padding
+                              border: InputBorder.none, 
+                              contentPadding: EdgeInsets.symmetric(horizontal: 20), 
                             ),
                           ),
                         ),
@@ -152,31 +203,22 @@ class Signin extends StatelessWidget {
                 ),
                 SizedBox(height: 40),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          screenWidth * 0.1), // Adjust horizontal padding
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1), // Adjust horizontal padding
                   child: SizedBox(
-                    width: double.infinity, // Full width button
-                    height: 60, // Button height
+                    width: double.infinity, 
+                    height: 60, 
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Implement login logic here
-                        // For demonstration, just pop the current page
-                        Navigator.pop(
-                            context); // Navigate back to the previous page
-                      },
+                      onPressed: _signIn, 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF5CB287), // Set button color
-                        shape: RoundedRectangleBorder(
-                            // Rounded button corners
-                            ),
+                        backgroundColor: Color(0xFF5CB287), 
+                        shape: RoundedRectangleBorder(), 
                       ),
                       child: Text(
                         'Sign In',
                         style: TextStyle(
                           fontSize: 30,
-                          fontWeight: FontWeight.w600, // Semi-bold font weight
-                          color: Colors.white, // White color
+                          fontWeight: FontWeight.w600, 
+                          color: Colors.white, 
                         ),
                       ),
                     ),
@@ -184,9 +226,7 @@ class Signin extends StatelessWidget {
                 ),
                 SizedBox(height: 50),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                          screenWidth * 0.1), // Adjust horizontal padding
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1), 
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -199,12 +239,10 @@ class Signin extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Navigate to registration page
+                          
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                     Signup ()), // Replace 'RegistrationPage()' with your registration page widget
+                            MaterialPageRoute(builder: (context) => Signup()), 
                           );
                         },
                         child: Text(
@@ -224,6 +262,7 @@ class Signin extends StatelessWidget {
           ),
         ],
       ),
+      )
     );
   }
 }
