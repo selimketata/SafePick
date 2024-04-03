@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',  # CSRF middleware included here
+     # CSRF middleware included here
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'backproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'pcdkamoir',
+        'NAME': 'pcd',
     }
 }
 
@@ -142,8 +142,11 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS={
+   
    "django.contrib.auth.backends.ModelBackend" ,
    "allauth.account.auth_backends.AuthenticationBackend",
+    'sahrr.custom_auth_backend.MongoDBBackend',
+    
     
 }
 
