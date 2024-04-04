@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .serializers import UserRegistrationSerializer, UserProfileSerializer
 from .models import UserProfile
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 
 class UserProfileView(APIView):
@@ -60,3 +61,18 @@ def login(request):
                 return Response({'exists': False}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'email and/or password parameters are missing'}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def get_user_profile(request):
+    if request.method == 'POST':
+        if 'email' in request.data:
+            email = request.data['email']
+            try:
+                user_profile = get_object_or_404(UserProfile, email=email)
+                serializer = UserProfileSerializer(user_profile)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except UserProfile.DoesNotExist:
+                return Response({'error': 'User profile not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'error': 'Email parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

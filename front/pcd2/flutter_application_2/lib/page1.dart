@@ -28,20 +28,20 @@ const TextStyle whiteStyle = TextStyle(
   letterSpacing: 2.5,
 );
 const TextStyle boldStylee = TextStyle(
-  fontSize: 55.0,
+  fontSize: 45.0,
   color: Colors.black,
   fontFamily: "SF Pro Text",
   fontWeight: FontWeight.bold,
 );
 
 const TextStyle boldStyle = TextStyle(
-  fontSize: 55.0,
+  fontSize: 45.0,
   color: Color(0xFFECBE5C),
   fontFamily: "SF Pro Text",
   fontWeight: FontWeight.bold,
 );
 const TextStyle boldStyleE = TextStyle(
-  fontSize: 50.0,
+  fontSize: 45.0,
   color: Color(0xFF5CB287),
   fontFamily: "SF Pro Text",
   fontWeight: FontWeight.bold,
@@ -97,7 +97,7 @@ class Rectangletwo extends StatelessWidget {
           bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
-            ? Color(0xFF5CB287)
+            ? Color(0xFFECBE5C)
             : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
@@ -183,7 +183,7 @@ class FirstPage extends StatelessWidget {
                   height: 20.0,
                 ),
                 Text(
-                  "Decode the blend: where composition\n"
+                  "Decode the blend: where composition "
                   "meets evaluation.",
                   style: descriptionGreyStyle,
                 ),
@@ -265,8 +265,8 @@ class SecondPage extends StatelessWidget {
                   height: 10.0, 
                 ),
                 Text(
-                  "Insightful rating based on the quality\n"
-                  "of ingredients, empowering users to\n"
+                  "Insightful rating based on the quality "
+                  "of ingredients, empowering users to "
                   "make informed and healthier choices.",
                   style: descriptionWhiteStyle,
                 ),
