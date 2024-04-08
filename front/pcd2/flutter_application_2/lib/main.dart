@@ -27,7 +27,13 @@ class _LiquidSwipePageState extends State<LiquidSwipePage> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [FirstPage(), SecondPage(), ThirdPage(), SignIn()];
+    final pages = [
+     
+      FirstPage(),
+      SecondPage(),
+      ThirdPage(),
+      SignIn()
+    ];
 
     return Scaffold(
       body: LiquidSwipe(
