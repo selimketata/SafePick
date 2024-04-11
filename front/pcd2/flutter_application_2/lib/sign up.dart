@@ -49,8 +49,7 @@ class _SignupState extends State<Signup> {
     if (avatar.isNotEmpty) {
       setState(() {
         selectedAvatar = avatar;
-        _image = File(
-            avatar); 
+        _image = File(avatar);
       });
     }
   }
@@ -61,7 +60,6 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    
     if (_emailController.text.isEmpty) {
       _showErrorDialog(context, 'Email field is empty.');
       return;
@@ -71,7 +69,6 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    
     if (_passwordController.text.isEmpty) {
       _showErrorDialog(context, 'Password field is empty.');
       return;
@@ -81,19 +78,16 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    
     if (_confirmPasswordController.text.isEmpty) {
       _showErrorDialog(context, 'Confirm password field is empty.');
       return;
     }
 
-    
     if (_image == null) {
       _showErrorDialog(context, 'Avatar is not selected.');
       return;
     }
 
-    
     if (_passwordController.text != _confirmPasswordController.text) {
       showDialog(
         context: context,
@@ -115,7 +109,7 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    final String apiUrl = 'http://10.0.2.2:8000/sahrr/register/';
+    final String apiUrl = 'http://192.168.1.19:9000/sahrr/register/';
     final imageName = _image!.path.split('/').last;
 
     final response = await http.post(
@@ -153,10 +147,10 @@ class _SignupState extends State<Signup> {
           );
         },
       );
-    _nameController.clear();
-    _emailController.clear();
-    _passwordController.clear();
-    _confirmPasswordController.clear();
+      _nameController.clear();
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
     } else {
       showDialog(
         context: context,
@@ -200,38 +194,37 @@ class _SignupState extends State<Signup> {
               ),
             ),
             SizedBox(height: 30),
-       Center(
-  child: Stack(
-    children: [
-      CircleAvatar(
-        radius: 60,
-        backgroundColor: Colors.grey[300],
-        backgroundImage: selectedAvatar.isNotEmpty
-            ? AssetImage(selectedAvatar)
-            : AssetImage('assets/icons/default_avatar.png'),
-      ),
-      Positioned(
-        top: 80, 
-        left: 80, 
-        child: IconButton(
-          icon: Icon(Icons.add_a_photo),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UserAvatar(
-                  onAvatarSelected: _handleAvatarSelected,
-                  selectedAvatar: selectedAvatar,
-                ),
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: selectedAvatar.isNotEmpty
+                        ? AssetImage(selectedAvatar)
+                        : AssetImage('assets/icons/default_avatar.png'),
+                  ),
+                  Positioned(
+                    top: 80,
+                    left: 80,
+                    child: IconButton(
+                      icon: Icon(Icons.add_a_photo),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserAvatar(
+                              onAvatarSelected: _handleAvatarSelected,
+                              selectedAvatar: selectedAvatar,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
-      ),
-    ],
-  ),
-),
-
+            ),
             SizedBox(height: 30),
             Center(
               child: Container(

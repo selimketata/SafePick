@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'sign up.dart';
 import 'ProfilePage.dart';
+import 'Home_page.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final String apiUrl = 'http://10.0.2.2:8000/sahrr/login/';
+  final String apiUrl = 'http://192.168.1.19:9000/sahrr/login/';
 
   Future<void> _signIn() async {
     try {
@@ -34,11 +35,9 @@ class _SignInState extends State<SignIn> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfilePage(email: userEmail),
+            builder: (context) => HomePage( email: userEmail),
           ),
         );
-
-        print('Login successful');
         _emailController.clear();
         _passwordController.clear();
       } else {

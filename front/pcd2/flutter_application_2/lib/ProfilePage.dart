@@ -25,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/sahrr/get_user_profile/'),
+        Uri.parse('http://192.168.1.19:9000/sahrr/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -51,15 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final double imageRadius = 180; // Set the radius of the image circle
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+     
       backgroundColor:
           Color(0xFFFDF6EC), // Set the background color of the scaffold
       body: Stack(

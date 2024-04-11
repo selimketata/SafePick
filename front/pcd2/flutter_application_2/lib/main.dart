@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import './page1.dart';
-import 'sign in.dart';
 
-// Import the page you want to navigate to
+
+import './sign in.dart';
+import 'chatbot.dart';
+import 'community.dart';
+import 'cosmetic.dart';
+import 'food.dart';
+import 'home_page.dart';
+import 'scan.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +18,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LiquidSwipePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LiquidSwipePage(),
+      
+        '/chatbot': (context) => const chatbot(),
+        '/cosmetic': (context) => const cosmetic(),
+        '/scan': (context) => const ScanApp(),
+        '/food': (context) => const food(),
+        '/community': (context) => const community(),
+      },
     );
   }
 }
@@ -28,11 +43,10 @@ class _LiquidSwipePageState extends State<LiquidSwipePage> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-     
       FirstPage(),
-      SecondPage(),
+      SeconPage(),
       ThirdPage(),
-      SignIn()
+      SignIn(),
     ];
 
     return Scaffold(

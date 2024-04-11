@@ -206,7 +206,7 @@ class FirstPage extends StatelessWidget {
   }
 }
 
-class SecondPage extends StatelessWidget {
+class SeconPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
