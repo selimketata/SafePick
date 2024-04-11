@@ -20,6 +20,7 @@ class ProductF(models.Model):
     ingredients_text = models.TextField(null=True)
     ingredients_tags = models.CharField(max_length=10000, null=True)
     ingredients_analysis_tags = models.CharField(max_length=10000, null=True)
+    allergens = models.CharField(max_length=10000, null=True)
     serving_size = models.CharField(max_length=10000, null=True)
     serving_quantity = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     additives_n = models.IntegerField(null=True)
@@ -48,7 +49,6 @@ class ProductF(models.Model):
     image_small_url = models.URLField(max_length=200, null=True)
     image_ingredients_url = models.URLField(max_length=200, null=True)
     image_ingredients_small_url = models.URLField(max_length=200, null=True)
-    energy_kcal_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     energy_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     fat_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     saturated_fat_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
@@ -82,7 +82,8 @@ class ProductF(models.Model):
     nutrition_score_fr_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     phylloquinone_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
     nutriscore_score_out_of_100 = models.IntegerField(null=True)
-    image = models.BinaryField()
+    background_removed_image = models.CharField(max_length=100000000, null=True)
+    energy_kcal_100g = models.DecimalField(max_digits=10000, decimal_places=2, null=True)
 
 
     def __str__(self):
