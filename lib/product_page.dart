@@ -125,7 +125,7 @@ class ProductPage extends StatelessWidget {
                         color: Color(0xff5CB287), // Change color as needed
                       ),
                     ),),
-                    SizedBox(height: 30),
+                    SizedBox(height: 8),
                      Center(
                     child :Container(
                       height: 240,
@@ -146,7 +146,7 @@ class ProductPage extends StatelessWidget {
                         circularStrokeCap: CircularStrokeCap.round,
                       ),
                     )),
-                    SizedBox(height: 20,), // Add some space between the circular indicator and the percentage
+                    SizedBox(height: 10,), // Add some space between the circular indicator and the percentage
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
