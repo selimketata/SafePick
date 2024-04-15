@@ -19,47 +19,50 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffFDF6EC),
-      appBar: AppBar(
-        elevation: 0, // Removes shadow from the AppBar
-        backgroundColor: Colors.transparent, // Makes AppBar background transparent
-        leading: Container(
-          width: 47,
-          height: 47,
-          decoration: BoxDecoration(
-            color: Color(0xFFECBE5C),
-            shape: BoxShape.circle,
-          ),
-          margin: EdgeInsets.only(left: 10), // Adds left margin for padding
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        actions: [
-          // Favorite button on the extreme right
-          Container(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(47), // Adjust the preferred height as needed
+        child: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: Container(
             width: 47,
             height: 47,
             decoration: BoxDecoration(
               color: Color(0xFFECBE5C),
               shape: BoxShape.circle,
             ),
-            margin: EdgeInsets.only(right: 10), // Adds right margin for padding
+            margin: EdgeInsets.only(left: 10),
             child: IconButton(
-              icon: Icon(Icons.favorite, color: Colors.white),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
-                // Add your favorite functionality here
+                Navigator.pop(context);
               },
             ),
           ),
-        ],
+          actions: [
+            Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                color: Color(0xFFECBE5C),
+                shape: BoxShape.circle,
+              ),
+              margin: EdgeInsets.only(right: 10),
+              child: IconButton(
+                icon: Icon(Icons.favorite, color: Colors.white),
+                onPressed: () {
+                  // Add your favorite functionality here
+                },
+              ),
+            ),
+          ],
+        ),
       ),
-      body:SingleChildScrollView(
+
+      body:Padding(
+        padding: const EdgeInsets.only(top:0.0,left:16.0,right:16.0,bottom: 0.0),
+        child :SingleChildScrollView(
         child:Center(
-        child :Padding(
-          padding: const EdgeInsets.only(top:2.0,left:16.0,right:16.0,bottom: 16.0),
           child: FutureBuilder<ProductF>(
             future: apiService.fetchProduct(productId),
             builder: (context, snapshot) {
@@ -72,20 +75,56 @@ class ProductPage extends StatelessWidget {
                 final image = snapshot.data!.backgroundRemovedImage;
                 Uint8List byte = base64Decode(image!);
                 final nutrientMap = snapshot.data!.nutrientMap;
-                return  Column(
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
-               Center(
+                    Row(
+                    children :[Padding(
+                      padding: EdgeInsets.only(left: 30,top:50), // Adjust the right padding as needed
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xffECBE5C), // Change color as needed
+                        ),
+                      ),
+                    ),
+                  Padding(
+                   padding: EdgeInsets.only(left: 270,top:50),
+                    child : Container(
+                      width: 17,
+                      height: 17,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xffECBE5C), // Change color as needed
+                      ),
+                    ),
+                    ),
+                    ],
+                    ),
 
-                   child: Text(
+                    // SizedBox(height: 20),
+
+                    Center(
+                    child: Text(
                       product.productName ?? 'No Name',
                       style: TextStyle(
-                        fontSize: 36,
+                        fontSize: 34,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'SF Pro Text',
                       ),
                     ), ),
+              Padding(
+              padding: EdgeInsets.only(left: 250,top:5),
+                    child :Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xff5CB287), // Change color as needed
+                      ),
+                    ),),
                     SizedBox(height: 30),
                      Center(
                     child :Container(
@@ -376,6 +415,7 @@ class ProductPage extends StatelessWidget {
 
 
               ],
+
 
 
                 );
