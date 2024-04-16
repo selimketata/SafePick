@@ -43,9 +43,16 @@ INSTALLED_APPS = [
     'corsheaders',
     'SafePick.apps.SafePickConfig',
     'djongo',
-    
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
     
 ]
+
 CORS_ORIFIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
@@ -57,9 +64,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
 
 ROOT_URLCONF = 'DjangoAPI.urls'
 
@@ -108,6 +115,15 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+AUTHENTICATION_BACKENDS={
+   
+   "django.contrib.auth.backends.ModelBackend" ,
+   "allauth.account.auth_backends.AuthenticationBackend",
+    'SafePick.custom_auth_backend.MongoDBBackend',
+    
+    
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -146,3 +162,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_UNIQUE_EMAIL = True
