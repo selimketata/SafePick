@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'ProfilePage.dart';
+import 'Community.dart';
+import 'food.dart';
+import 'cosmetic.dart';
+import 'ChatBot.dart';
+import 'scan.dart';
 
 class SecondPage extends StatefulWidget {
-
   final String email;
 
   const SecondPage({Key? key, required this.email}) : super(key: key);
@@ -24,19 +28,32 @@ class _SecondPageState extends State<SecondPage> {
     'assets/images/icon4.png',
     'assets/images/icon5.png',
   ];
-  late String username = "";
+
   late String photo = "";
+
+  late List<Function> _routes=[]; // List to store navigation functions
 
   @override
   void initState() {
     super.initState();
     _fetchUserPhoto();
+    _initializeRoutes();
+  }
+
+  void _initializeRoutes() {
+    _routes = [
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+    ];
   }
 
   Future<void> _fetchUserPhoto() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.138:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -53,16 +70,16 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
-  List<String> _routes = [
-    '/community',
-    '/food',
-    '/cosmetic',
-    '/chatbot',
-    '/scan',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    if (_routes.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6EC),
       body: Stack(
@@ -86,9 +103,7 @@ class _SecondPageState extends State<SecondPage> {
             right: 25,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-  builder: (context) => ProfilePage(email: widget.email)));
-
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)));
               },
               child: Image.asset(
                 'assets/icons/$photo', // Replace 'your_image.png' with your actual image path
@@ -143,7 +158,9 @@ class _SecondPageState extends State<SecondPage> {
                             builder: (BuildContext context) {
                               return GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(context, _routes[index]);
+                                  print(
+                                      "Navigating to ${_routes[index]} with email ${widget.email}");
+                                  _routes[index](); // Execute the function from the list
                                 },
                                 child: SizedBox(
                                   height: 200, // Adjust the height here
@@ -198,11 +215,7 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 77, // Adjust these values
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              String secondPageRoute =
-                                                  _routes[index];
-
-                                              Navigator.pushNamed(
-                                                  context, secondPageRoute);
+                                              _routes[index](); // Execute the function from the list
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -337,3 +350,4 @@ class _SecondPageState extends State<SecondPage> {
     );
   }
 }
+

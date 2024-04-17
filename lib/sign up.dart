@@ -109,7 +109,7 @@ class _SignupState extends State<Signup> {
       return;
     }
 
-    final String apiUrl = 'http://192.168.1.138:9000/register/';
+    final String apiUrl = 'http://192.168.1.67:9000/register/';
     final imageName = _image!.path.split('/').last;
 
     final response = await http.post(

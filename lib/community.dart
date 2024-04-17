@@ -1,13 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class Community extends StatelessWidget {
+class Community extends StatefulWidget {
+  final String email;
+
+  const Community({Key? key, required this.email}) : super(key: key);
+
+  @override
+  _CommunityState createState() => _CommunityState();
+}
+
+class _CommunityState extends State<Community> {
+  late String username = "";
+  late String photo = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          username = responseData['username'];
+          photo = responseData['photo_name'];
+        });
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         color: Color(0xFFFDF6EC),
-
         child: Stack(
           children: [
             Align(
@@ -109,16 +149,15 @@ class Community extends StatelessWidget {
                         ),
                       ),
                     ],
-
                   ),
                   SizedBox(width: 500),
-                  SizedBox(width:100),
+                  SizedBox(width: 100),
                   Container(
                     height: 2,
-                    width : 380,
+                    width: 380,
                     color: Color(0xFF5CB287),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 20), // Add vertical spacing
                   Container(
                     height: 55,
@@ -128,7 +167,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -149,7 +188,7 @@ class Community extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 10), // Add vertical spacing
                   Container(
                     height: 55,
@@ -159,7 +198,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -180,7 +219,7 @@ class Community extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 10), // Add vertical spacing
                   Container(
                     height: 55,
@@ -190,7 +229,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -235,16 +274,15 @@ class Community extends StatelessWidget {
                         ),
                       ),
                     ],
-
                   ),
                   SizedBox(width: 500),
-                  SizedBox(width:100),
+                  SizedBox(width: 100),
                   Container(
                     height: 2,
-                    width : 380,
+                    width: 380,
                     color: Color(0xFF5CB287),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 20), // Add vertical spacing
                   Container(
                     height: 55,
@@ -254,7 +292,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -275,7 +313,7 @@ class Community extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 10), // Add vertical spacing
                   Container(
                     height: 55,
@@ -285,7 +323,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -306,7 +344,7 @@ class Community extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width : 300),
+                  SizedBox(width: 300),
                   SizedBox(height: 10), // Add vertical spacing
                   Container(
                     height: 55,
@@ -316,7 +354,7 @@ class Community extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(217, 217, 217, 0.35),
                       borderRadius: BorderRadius.circular(10),
-                    ),// Add padding to align content
+                    ), // Add padding to align content
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -337,8 +375,6 @@ class Community extends StatelessWidget {
                       ],
                     ),
                   ),
-
-
                 ],
               ),
             ),
@@ -346,7 +382,7 @@ class Community extends StatelessWidget {
               top: 35,
               right: 16,
               child: Image.asset(
-                'assets/images/femme.png', // Replace with your image path
+                'assets/icons/$photo', // Replace with your image path
                 width: 42,
                 height: 42,
               ),
@@ -376,7 +412,8 @@ class Community extends StatelessWidget {
               // Replace the current route with CommunityPage when pressed
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => Community()),
+                MaterialPageRoute(
+                    builder: (context) => Community(email: widget.email)),
               );
             },
             child: Container(
@@ -387,9 +424,6 @@ class Community extends StatelessWidget {
           ),
         ],
       ),
-
-
     );
   }
 }
-

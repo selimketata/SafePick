@@ -2,14 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import './page1.dart';
 
-
 import './sign in.dart';
 import 'chatbot.dart';
 import 'community.dart';
 import 'cosmetic.dart';
 import 'food.dart';
-import 'home_page.dart';
+
 import 'scan.dart';
+import 'package:flutter/material.dart';
+
+class ErrorPage extends StatelessWidget {
+  final String message;
+
+  const ErrorPage({Key? key, required this.message}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Error'),
+      ),
+      body: Center(
+        child: Text(message),
+      ),
+    );
+  }
+}
 
 void main() => runApp(MyApp());
 
@@ -21,12 +39,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LiquidSwipePage(),
-      
         '/chatbot': (context) => const chatbot(),
         '/cosmetic': (context) => const cosmetic(),
         '/scan': (context) => const ScanApp(),
         '/food': (context) => const food(),
-        '/community': (context) => Community(),
+        '/community': (context) => Community(email: ModalRoute.of(context)!.settings.arguments as String),
       },
     );
   }
