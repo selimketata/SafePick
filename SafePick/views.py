@@ -13,6 +13,8 @@ from .serializers import UserRegistrationSerializer, UserProfileSerializer
 from .models import UserProfile
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+import json
+
 
 
 def get_productF(request, product_code):
@@ -185,4 +187,131 @@ def get_user_profile(request):
             return Response({'error': 'Email parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
 
+def food_Alternatives(request, product_id):
+    if request.method == 'GET':
+        try:
+            # Connect to the MongoDB database
+            my_client = pymongo.MongoClient(settings.DB_NAME)
+            dbname = my_client['Safepick']
+            collection = dbname['food']
+
+            # Retrieve the specific product
+            specific_product = collection.find_one({'_id': ObjectId(product_id)})
+
+            if specific_product:
+                # Retrieve the current product's score
+                current_product_score = specific_product.get('score', 0)
+
+                # Try retrieving the specific category first
+                specific_category = specific_product.get('pnns_groups_1')
+
+                # If specific category doesn't exist or is null, fallback to pnns_groups_2
+                if not specific_category:
+                    specific_category = specific_product.get('pnns_groups_2')
+
+                # If both specific_category and pnns_groups_2 are null, return an error
+                if not specific_category:
+                    return JsonResponse({'error': 'No category found for the product'}, status=404)
+
+                # Retrieve products with the same category but not from the same collection
+                products_with_same_category = dbname.food.find({'pnns_groups_1': specific_category})
+
+                # Filter products based on score
+                products_with_same_category = [product for product in products_with_same_category if product.get('nutriscore_score_out_of_100', 0) >= current_product_score]
+                # Sort the products by nutriscore_score_out_of_100
+                sorted_products = sorted(products_with_same_category, key=lambda x: x.get('nutriscore_score_out_of_100', 0), reverse=True)
+                
+                # Serialize the products
+                serialized_products = []
+                if len(sorted_products) >= 5:
+                    # If the list contains at least 5 elements, loop through the first 5 elements
+                    for p in sorted_products[:5]:
+                        # Convert ObjectId to string for serialization
+                        p['_id'] = str(p['_id'])
+                        p['background_removed_image'] = base64.b64encode(p['background_removed_image']).decode('utf-8')
+                        # Convert p to JSON
+                        serialized_product = json.dumps(p, default=str)
+                        serialized_products.append(serialized_product)
+                else:
+                    # If the list contains fewer than 5 elements, loop through all the elements
+                    for p in sorted_products:
+                        # Convert ObjectId to string for serialization
+                        p['_id'] = str(p['_id'])
+                        p['background_removed_image'] = base64.b64encode(p['background_removed_image']).decode('utf-8')
+                        # Convert p to JSON
+                        serialized_product = json.dumps(p, default=str)
+                        serialized_products.append(serialized_product)
+
+                # Return the serialized products
+                return JsonResponse({'Alternatives': serialized_products})
+
+            else:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+def cosmetics_Alternatives(request, product_id):
+    if request.method == 'GET':
+        try:
+            # Connect to the MongoDB database
+            my_client = pymongo.MongoClient(settings.DB_NAME)
+            dbname = my_client['Safepick']
+            collection = dbname['cosmetics']
+
+            # Retrieve the specific product
+            specific_product = collection.find_one({'_id': ObjectId(product_id)})
+
+            if specific_product:
+                # Retrieve the current product's score
+                current_product_score = specific_product.get('score', 0)
+
+                # Try retrieving the specific category first
+                specific_category = specific_product.get('pnns_groups_1')
+
+                # If specific category doesn't exist or is null, fallback to pnns_groups_2
+                if not specific_category:
+                    specific_category = specific_product.get('pnns_groups_2')
+
+                # If both specific_category and pnns_groups_2 are null, return an error
+                if not specific_category:
+                    return JsonResponse({'error': 'No category found for the product'}, status=404)
+
+                # Retrieve products with the same category but not from the same collection
+                products_with_same_category = dbname.cosmetics.find({'pnns_groups_1': specific_category})
+
+                # Filter products based on score
+                products_with_same_category = [product for product in products_with_same_category if product.get('score', 0) >= current_product_score]
+                # Sort the products by nutriscore_score_out_of_100
+                sorted_products = sorted(products_with_same_category, key=lambda x: x.get('score', 0), reverse=True)
+                
+                # Serialize the products
+                serialized_products = []
+                if len(sorted_products) >= 5:
+                    # If the list contains at least 5 elements, loop through the first 5 elements
+                    for p in sorted_products[:5]:
+                        # Convert ObjectId to string for serialization
+                        p['_id'] = str(p['_id'])
+                        p['background_removed_image'] = base64.b64encode(p['background_removed_image']).decode('utf-8')
+                        # Convert p to JSON
+                        serialized_product = json.dumps(p, default=str)
+                        serialized_products.append(serialized_product)
+                else:
+                    # If the list contains fewer than 5 elements, loop through all the elements
+                    for p in sorted_products:
+                        # Convert ObjectId to string for serialization
+                        p['_id'] = str(p['_id'])
+                        p['background_removed_image'] = base64.b64encode(p['background_removed_image']).decode('utf-8')
+                        # Convert p to JSON
+                        serialized_product = json.dumps(p, default=str)
+                        serialized_products.append(serialized_product)
+
+                # Return the serialized products
+                return JsonResponse({'Alternatives': serialized_products})
+
+            else:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
