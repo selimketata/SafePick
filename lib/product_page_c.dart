@@ -3,40 +3,19 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_application_2/models/productC.dart';
 import 'package:http/http.dart' as http;
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../models/product.dart';
-import '../services/api_service.dart';
-import 'Details1.dart';
-import 'Details2.dart';
+import '../services/api_service_C.dart';
+import 'Details3.dart';
 
-// class foodProductPage extends StatelessWidget {
-//   const foodProductPage({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: Scaffold(
-//         backgroundColor: Colors.black,
-//         body: Stack(
-//           children: [
-//             ProductPage(productId: 26400163909),
-//             MyDraggableSheet(
-//                 child: Alternative()), // Ajouter ici le widget Alternative
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
-class ProductPage extends StatelessWidget {
+class ProductPageC extends StatelessWidget {
   final int productId;
   final apiService = ApiService();
 
-  ProductPage({required this.productId});
+  ProductPageC({required this.productId});
 
   @override
   Widget build(BuildContext context) {
@@ -83,25 +62,28 @@ class ProductPage extends StatelessWidget {
         ),
       ),
       body: Stack(
-          children: [
-            Padding(
-        padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0, bottom: 40.0),
+          children: [ Padding(
+        padding: const EdgeInsets.only(
+            top: 0.0, left: 16.0, right: 16.0, bottom: 16.0),
         child: SingleChildScrollView(
           child: Center(
-            child: FutureBuilder<ProductF>(
+            child: FutureBuilder<ProductC>(
               future: apiService.fetchProduct(productId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(color: Color(0xffECBE5C)),
-                  );
+                      child: CircularProgressIndicator(
+                    color: Color(0xffECBE5C),
+                  ));
                 } else if (snapshot.hasError) {
                   return Text("Error: ${snapshot.error}");
                 } else if (snapshot.hasData) {
                   final product = snapshot.data!;
                   final image = snapshot.data!.backgroundRemovedImage;
                   Uint8List byte = base64Decode(image!);
-                  final nutrientMap = snapshot.data!.nutrientMap;
+                  final ingredientsadditives =
+                      snapshot.data!.ingredientsadditives;
+                  final problematic = snapshot.data!.problematic;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -114,7 +96,7 @@ class ProductPage extends StatelessWidget {
                                 padding: EdgeInsets.only(left: 30, top: 20),
                                 child: Container(
                                   width: 20,
-                                  height:20,
+                                  height: 20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Color(0xffECBE5C),
@@ -133,7 +115,9 @@ class ProductPage extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 190, top: 40),  // Adjusted for simplicity
+                                padding: EdgeInsets.only(
+                                    left: 190,
+                                    top: 40), // Adjusted for simplicity
                                 child: Container(
                                   width: 50,
                                   height: 50,
@@ -143,14 +127,15 @@ class ProductPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                           // Positioned Text in the center with wrapping
                           Positioned.fill(
                             child: Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 50),  // Increase padding to ensure text does not overlap with the circles too much
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        50), // Increase padding to ensure text does not overlap with the circles too much
                                 child: Text(
                                   product.productName ?? 'No Name',
                                   textAlign: TextAlign.center,
@@ -160,13 +145,13 @@ class ProductPage extends StatelessWidget {
                                     fontFamily: 'Harmonia Sans W01 Regular',
                                   ),
                                   softWrap: true,
-                                  overflow: TextOverflow.fade,  // Handles text overflow gracefully
+                                  overflow: TextOverflow
+                                      .fade, // Handles text overflow gracefully
                                 ),
                               ),
                             ),
                           ),
                           // Additional circle in the row
-
                         ],
                       ),
 
@@ -180,9 +165,7 @@ class ProductPage extends StatelessWidget {
                           animationDuration: 1000,
                           radius: 120,
                           lineWidth: 20,
-                          percent: (product.nutriscoreScoreOutOf100 ?? 0)
-                                  .toDouble() /
-                              100,
+                          percent: (product.score ?? 0).toDouble() / 100,
                           center: Image.memory(
                             byte, // Assuming 'byte' is a Uint8List
                             height: 160,
@@ -200,7 +183,7 @@ class ProductPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${product.nutriscoreScoreOutOf100 ?? 0}%', // Display the percentage
+                            '${product.score ?? 0}%', // Display the percentage
                             style: TextStyle(
                               fontSize: 32,
                               fontFamily: 'Inter',
@@ -216,7 +199,8 @@ class ProductPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: AssetImage('assets/images/approuver.png'), // Replace 'assets/small_image.png' with your image path
+                                image: AssetImage(
+                                    'images/approuver.png'), // Replace 'assets/small_image.png' with your image path
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -229,7 +213,7 @@ class ProductPage extends StatelessWidget {
                         children: [
                           // 'Ingredients' text on the left
                           Text(
-                            'Nutritients:',
+                            'Ingredients:',
                             style: TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
@@ -277,6 +261,7 @@ class ProductPage extends StatelessWidget {
                           ),
                         ],
                       ).animate().fade(duration: 550.ms).slideY(),
+
                       // for (int i = 0; i < 20; i++)
                       //   Text('Scrolling Test Text ${i + 1}', style: TextStyle(fontSize: 22)),
                       SizedBox(
@@ -298,7 +283,7 @@ class ProductPage extends StatelessWidget {
                                     Padding(
                                       padding: EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'energyKcal',
+                                        'Ingredients from palm oil',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -324,7 +309,7 @@ class ProductPage extends StatelessWidget {
                                               width:
                                                   4), // Adjust spacing as needed
                                           Text(
-                                            'Value: ${product.energyKcal100g}',
+                                            'Value: ${product.ingredientsFromPalmOilN}',
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.black87,
@@ -336,7 +321,6 @@ class ProductPage extends StatelessWidget {
                                   ],
                                 ),
                                 Spacer(),
-
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: GestureDetector(
@@ -344,37 +328,142 @@ class ProductPage extends StatelessWidget {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return Details1(); // Show ProductDetailsDialog as a dialog
+                                          return Details3(); // Show ProductDetailsDialog as a dialog
                                         },
                                       );
                                     },
                                     child: Icon(Icons.info, color: Colors.grey),
                                   ),
                                 ),
-                                // Add more widgets as needed
-                              ],
-                            ),
-                          ).animate().fade(duration: 550.ms).slideY(),
-                        ],
-                      ),
-                      SizedBox(height: 10), // Add space between the containers
+                              ], // Closing parenthesis for Row widget
+                            ), // Closing parenthesis for Container widget
+                          ), // Closing parenthesis for Container widget
+                        ], // Closing parenthesis for Column widget
+                      )
+                          .animate()
+                          .fade(duration: 550.ms)
+                          .slideY(), // Closing parenthesis for Column widget
 
-                      // Second Container (Copy and paste the first Container code here)
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(0xffD9D9D9).withOpacity(0.5),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 6),
-                                  child: Text(
-                                    'Fibers',
+                      //         Spacer(),
+                      //
+                      //         Padding(
+                      //           padding: EdgeInsets.all(15),
+                      //           child: GestureDetector(
+                      //             onTap: () {
+                      //               showDialog(
+                      //                 context: context,
+                      //                 builder: (BuildContext context) {
+                      //                   return Details1() ; // Show ProductDetailsDialog as a dialog
+                      //                 },
+                      //               );
+                      //             },
+                      //             child: Icon(Icons.info, color: Colors.grey),
+                      //           ),
+                      //         ),
+                      //         // Add more widgets as needed
+                      //       ],
+                      //     ),
+                      //   ).animate().fade(duration: 550.ms).slideY(),
+                      //   ],
+                      // ),
+                      // SizedBox(height: 10), // Add space between the containers
+                      //
+                      // // Second Container (Copy and paste the first Container code here)
+                      // Container(
+                      //   padding: EdgeInsets.all(5),
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(20),
+                      //     color: Color(0xffD9D9D9).withOpacity(0.5),
+                      //   ),
+                      //   child: Row(
+                      //     children: <Widget>[
+                      //       Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: <Widget>[
+                      //           Padding(
+                      //             padding: EdgeInsets.only(left: 6),
+                      //             child: Text(
+                      //               'Fibers',
+                      //               style: TextStyle(
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.bold,
+                      //                 color: Colors.black,
+                      //                 fontFamily: 'SF Pro Text',
+                      //
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Padding(
+                      //             padding: EdgeInsets.only(left: 6),
+                      //             child: Row(
+                      //               children: [
+                      //                 Container(
+                      //                   width: 7,
+                      //                   height: 7,
+                      //                   decoration: BoxDecoration(
+                      //                     shape: BoxShape.circle,
+                      //                     color: Color(0xff5CB287), // Adjust color as needed
+                      //                   ),
+                      //                 ),
+                      //                 SizedBox(width: 4), // Adjust spacing as needed
+                      //                 Text(
+                      //                   'Value: ${product.fiber100g}',
+                      //                   style: TextStyle(
+                      //                     fontSize: 14,
+                      //                     color: Colors.black87,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           )
+                      //         ],
+                      //       ),
+                      //       Spacer(),
+                      //       Padding(
+                      //         padding: EdgeInsets.all(15),
+                      //         child: GestureDetector(
+                      //           onTap: () {
+                      //             showDialog(
+                      //               context: context,
+                      //               builder: (BuildContext context) {
+                      //                 return Details2() ; // Show ProductDetailsDialog as a dialog
+                      //               },
+                      //             );
+                      //           },
+                      //           child: Icon(Icons.info, color: Colors.grey),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ).animate().fade(duration: 550.ms).slideY(),
+                      SizedBox(height: 10),
+
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: ExpansionTile(
+                          tilePadding: EdgeInsets.only(left: 10, right: 17),
+                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                          collapsedTextColor: Colors.black,
+                          collapsedBackgroundColor:
+                              Color(0xffD9D9D9).withOpacity(0.5),
+                          backgroundColor: Color(0xffD9D9D9).withOpacity(0.5),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 7,
+                                    height: 7,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(
+                                          0xffF1755B), // Adjust color as needed
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Problemetic Ingredients',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -382,56 +471,21 @@ class ProductPage extends StatelessWidget {
                                       fontFamily: 'SF Pro Text',
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 6),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 7,
-                                        height: 7,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(
-                                              0xff5CB287), // Adjust color as needed
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width: 4), // Adjust spacing as needed
-                                      Text(
-                                        'Value: ${product.fiber100g}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            Padding(
-                              padding: EdgeInsets.all(15),
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Details2(); // Show ProductDetailsDialog as a dialog
-                                    },
-                                  );
-                                },
-                                child: Icon(Icons.info, color: Colors.grey),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ).animate().fade(duration: 550.ms).slideY(),
+                            ],
+                          ),
+                          children: problematic.entries
+                              .map((entry) =>
+                                  buildInfoRow(entry.key, entry.value))
+                              .toList(),
+                        ).animate().fade(duration: 550.ms).slideY(),
+                      ),
                       SizedBox(height: 10),
-                       Padding(
-                       padding: const EdgeInsets.only( bottom: 80.0),
-                       child:ClipRRect(
+                Padding(
+                padding: const EdgeInsets.only( bottom: 80.0),
+                child:
+                      ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: ExpansionTile(
                           tilePadding: EdgeInsets.only(left: 10, right: 17),
@@ -444,7 +498,7 @@ class ProductPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Other nutrients',
+                                'Other Ingredients',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -453,7 +507,7 @@ class ProductPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'Allergens and more..',
+                                'Additives and more..',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black87,
@@ -461,14 +515,13 @@ class ProductPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          children: nutrientMap.entries
+                          children: ingredientsadditives.entries
                               .map((entry) =>
                                   buildInfoRow(entry.key, entry.value))
                               .toList(),
                         ).animate().fade(duration: 550.ms).slideY(),
                       ),
                 ),
-
 
                     ],
 
@@ -480,7 +533,7 @@ class ProductPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
+          ),
             MyDraggableSheet(
                 child: Alternative()), // Ajouter ici le widget Alternative
           ],
@@ -489,7 +542,13 @@ class ProductPage extends StatelessWidget {
   }
 }
 
+
 Widget buildInfoRow(String title, dynamic value) {
+  // Check if value is null or an empty list
+  if (value == null || (value is List && value.isEmpty)) {
+    return SizedBox(); // Return an empty SizedBox if value is null or an empty list
+  }
+
   return Row(
     children: [
       Column(
@@ -509,13 +568,20 @@ Widget buildInfoRow(String title, dynamic value) {
           ),
           Padding(
             padding: EdgeInsets.only(left: 10),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment
+                  .start, // Aligns children to the start of the column
               children: [
-                Text(
-                  'Value: $value',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
+                Container(
+                  width:
+                      200, // Specify an appropriate width based on your layout needs
+                  child: Text(
+                    '$value',
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
               ],
@@ -524,7 +590,6 @@ Widget buildInfoRow(String title, dynamic value) {
         ],
       ),
     ],
-
   );
 }
 
@@ -550,7 +615,7 @@ class Alternative extends StatelessWidget {
                   BottomSheetDummyUI(
                     content: product['product_name'],
                     img: product['background_removed_image'],
-                    score: product['nutriscore_score_out_of_100'], // Add the 'score' parameter here
+                    score: product['score'], // Add the 'score' parameter here
                   ),
               ],
             ),
@@ -563,7 +628,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.67:9000/alternatives/food/26400163909/'));
+          'http://192.168.1.67:9000/alternatives/cosmetics//'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data

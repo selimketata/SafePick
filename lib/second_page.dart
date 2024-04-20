@@ -42,11 +42,11 @@ class _SecondPageState extends State<SecondPage> {
 
   void _initializeRoutes() {
     _routes = [
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ScanApp())),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
     ];
   }
 

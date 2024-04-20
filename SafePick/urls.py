@@ -26,6 +26,8 @@ path('remove_user_from_community/', views.remove_user_from_community, name='remo
 path('get_all_communities/', views.get_all_communities, name='get_all_communities'),
 path('create_message/', views.create_message, name='create_message'),
  path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
+ path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
+path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

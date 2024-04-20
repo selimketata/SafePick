@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_application_2/product_page.dart';
+import 'package:flutter_application_2/product_page_forscan.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -28,7 +28,7 @@ class ScanApp extends StatelessWidget {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductPage(productId:  26400163909),
+          builder: (context) => ProductPageforScan(productId:  26400163909),
         ),
       );
     }
