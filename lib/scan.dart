@@ -28,7 +28,7 @@ class ScanApp extends StatelessWidget {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductPageforScan(productId:  73852007763),
+          builder: (context) => ProductPageforScan(productId:  26400163909),
         ),
       );
     }

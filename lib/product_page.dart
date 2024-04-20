@@ -11,26 +11,26 @@ import '../services/api_service.dart';
 import 'Details1.dart';
 import 'Details2.dart';
 
-class foodProductPage extends StatelessWidget {
-  const foodProductPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            ProductPage(productId: 26400163909),
-            MyDraggableSheet(
-                child: Alternative()), // Ajouter ici le widget Alternative
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class foodProductPage extends StatelessWidget {
+//   const foodProductPage({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: Scaffold(
+//         backgroundColor: Colors.black,
+//         body: Stack(
+//           children: [
+//             ProductPage(productId: 26400163909),
+//             MyDraggableSheet(
+//                 child: Alternative()), // Ajouter ici le widget Alternative
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ProductPage extends StatelessWidget {
   final int productId;
@@ -82,9 +82,10 @@ class ProductPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-            top: 0.0, left: 16.0, right: 16.0, bottom: 16.0),
+      body: Stack(
+          children: [
+            Padding(
+        padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0, bottom: 40.0),
         child: SingleChildScrollView(
           child: Center(
             child: FutureBuilder<ProductF>(
@@ -102,7 +103,7 @@ class ProductPage extends StatelessWidget {
                   Uint8List byte = base64Decode(image!);
                   final nutrientMap = snapshot.data!.nutrientMap;
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Stack(
                         children: [
@@ -113,7 +114,7 @@ class ProductPage extends StatelessWidget {
                                 padding: EdgeInsets.only(left: 30, top: 20),
                                 child: Container(
                                   width: 20,
-                                  height: 20,
+                                  height:20,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Color(0xffECBE5C),
@@ -132,9 +133,7 @@ class ProductPage extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(
-                                    left: 190,
-                                    top: 40), // Adjusted for simplicity
+                                padding: EdgeInsets.only(left: 190, top: 40),  // Adjusted for simplicity
                                 child: Container(
                                   width: 50,
                                   height: 50,
@@ -144,31 +143,30 @@ class ProductPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
+
                             ],
                           ),
                           // Positioned Text in the center with wrapping
                           Positioned.fill(
                             child: Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        50), // Increase padding to ensure text does not overlap with the circles too much
+                                padding: EdgeInsets.symmetric(horizontal: 50),  // Increase padding to ensure text does not overlap with the circles too much
                                 child: Text(
                                   product.productName ?? 'No Name',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Harmonia Sans W01 Regular',
                                   ),
                                   softWrap: true,
-                                  overflow: TextOverflow
-                                      .fade, // Handles text overflow gracefully
+                                  overflow: TextOverflow.fade,  // Handles text overflow gracefully
                                 ),
                               ),
                             ),
                           ),
                           // Additional circle in the row
+
                         ],
                       ),
 
@@ -432,8 +430,10 @@ class ProductPage extends StatelessWidget {
                         ),
                       ).animate().fade(duration: 550.ms).slideY(),
                       SizedBox(height: 10),
+                Padding(
+                padding: const EdgeInsets.only( bottom: 80.0),
 
-                      ClipRRect(
+                      child:ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: ExpansionTile(
                           tilePadding: EdgeInsets.only(left: 10, right: 17),
@@ -469,7 +469,11 @@ class ProductPage extends StatelessWidget {
                               .toList(),
                         ).animate().fade(duration: 550.ms).slideY(),
                       ),
+                ),
+
+
                     ],
+
                   );
                 } else {
                   return Text("No product data available");
@@ -478,6 +482,10 @@ class ProductPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
+            MyDraggableSheet(
+                child: Alternative()), // Ajouter ici le widget Alternative
+          ],
       ),
     );
   }
@@ -518,6 +526,7 @@ Widget buildInfoRow(String title, dynamic value) {
         ],
       ),
     ],
+
   );
 }
 
@@ -543,7 +552,7 @@ class Alternative extends StatelessWidget {
                   BottomSheetDummyUI(
                     content: product['product_name'],
                     img: product['background_removed_image'],
-                    score: product['score'], // Add the 'score' parameter here
+                    score: product['nutriscore_score_out_of_100'], // Add the 'score' parameter here
                   ),
               ],
             ),
@@ -556,7 +565,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.2:8000/alternatives/food/65fe2de7b21e74abad62ecba/'));
+          'http://192.168.1.16:9000/alternatives/food/26400163909/'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
