@@ -186,3 +186,105 @@ def get_user_profile(request):
     else:
         return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+def food_Alternatives(request, product_code):
+    if request.method == 'GET':
+        try:
+            # Connect to the MongoDB database
+            my_client = pymongo.MongoClient(settings.DB_NAME)
+            dbname = my_client['Safepick']
+            collection = dbname['food']
+
+            # Retrieve the specific product
+            specific_product = collection.find_one({'code': product_code})
+
+            if specific_product:
+                # Retrieve the current product's score
+                current_product_score = specific_product.get('nutriscore_score_out_of_100', 0)
+
+                # Try retrieving the specific category first
+                specific_category = specific_product.get('pnns_groups_1')
+
+                # If specific category doesn't exist or is null, fallback to pnns_groups_2
+                if not specific_category:
+                    specific_category = specific_product.get('pnns_groups_2')
+
+                # If both specific_category and pnns_groups_2 are null, return an error
+                if not specific_category:
+                    return JsonResponse({'error': 'No category found for the product'}, status=404)
+
+                # Query for products with the same category and score >= current product score
+                products_with_same_category = collection.find(
+                    {'pnns_groups_1': specific_category,
+                     'nutriscore_score_out_of_100': {'$gte': current_product_score}}
+                ).sort('nutriscore_score_out_of_100', pymongo.DESCENDING).limit(5)
+
+                # Serialize the products
+                serialized_products = []
+                for product in products_with_same_category:
+                    # Convert ObjectId to string for serialization
+                    product['_id'] = str(product['_id'])
+                    product['background_removed_image'] = base64.b64encode(product['background_removed_image']).decode('utf-8')
+                    # Convert product to JSON
+                    serialized_product = json.dumps(product, default=str)
+                    serialized_products.append(serialized_product)
+
+                # Return the serialized products
+                return JsonResponse({'Alternatives': serialized_products})
+
+            else:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+def cosmetics_Alternatives(request, product_code):
+    if request.method == 'GET':
+        try:
+            # Connect to the MongoDB database
+            my_client = pymongo.MongoClient(settings.DB_NAME)
+            dbname = my_client['Safepick']
+            collection = dbname['cosmetics']
+
+            # Retrieve the specific product
+            specific_product = collection.find_one({'code': product_code})
+
+            if specific_product:
+                # Retrieve the current product's score
+                current_product_score = specific_product.get('score', 0)
+
+                # Try retrieving the specific category first
+                specific_category = specific_product.get('pnns_groups_1')
+
+                # If specific category doesn't exist or is null, fallback to pnns_groups_2
+                if not specific_category:
+                    specific_category = specific_product.get('pnns_groups_2')
+
+                # If both specific_category and pnns_groups_2 are null, return an error
+                if not specific_category:
+                    return JsonResponse({'error': 'No category found for the product'}, status=404)
+
+                # Query for products with the same category and score >= current product score
+                products_with_same_category = collection.find(
+                    {'pnns_groups_1': specific_category,
+                     'score': {'$gte': current_product_score}}
+                ).sort('score', pymongo.DESCENDING).limit(5)
+
+                # Serialize the products
+                serialized_products = []
+                for product in products_with_same_category:
+                    # Convert ObjectId to string for serialization
+                    product['_id'] = str(product['_id'])
+                    product['background_removed_image'] = base64.b64encode(product['background_removed_image']).decode('utf-8')
+                    # Convert product to JSON
+                    serialized_product = json.dumps(product, default=str)
+                    serialized_products.append(serialized_product)
+
+                # Return the serialized products
+                return JsonResponse({'Alternatives': serialized_products})
+
+            else:
+                return JsonResponse({'error': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
