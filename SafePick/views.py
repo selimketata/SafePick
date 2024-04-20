@@ -417,7 +417,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Message
-
 @api_view(['POST'])
 def get_messages_in_community(request):
     if request.method == 'POST':
@@ -428,14 +427,13 @@ def get_messages_in_community(request):
 
         try:
             # Query all messages for the specified community
-            messages = Message.objects.filter(community_name=community_name)
+            messages = Message.objects.filter(community_name=community_name).order_by('timestamp')
 
-            # Organize messages by user email
-            messages_by_user = {}
+            # Organize messages by timestamp
+            messages_by_timestamp = []
             for message in messages:
-                if message.email not in messages_by_user:
-                    messages_by_user[message.email] = []
-                messages_by_user[message.email].append({
+                messages_by_timestamp.append({
+                    "email": message.email,
                     "content": message.content,
                     "timestamp": message.timestamp
                 })
@@ -443,7 +441,7 @@ def get_messages_in_community(request):
             # Construct the response JSON object
             response_data = {
                 "community_name": community_name,
-                "messages": messages_by_user
+                "messages": messages_by_timestamp
             }
 
             return Response(response_data, status=status.HTTP_200_OK)

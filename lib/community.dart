@@ -184,10 +184,10 @@ class _CommunityState extends State<Community> {
               child: GestureDetector(
                 onTap: () {
                   // Add your function here
-                  print('Bulle photo tapped');
+               
                 },
                 child: Image.asset(
-                  'assets/images/chat-bulle.png',
+                   'assets/icons/$photo', 
                   width: 30,
                   height: 30,
                 ),
