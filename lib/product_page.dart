@@ -430,10 +430,9 @@ class ProductPage extends StatelessWidget {
                         ),
                       ).animate().fade(duration: 550.ms).slideY(),
                       SizedBox(height: 10),
-                Padding(
-                padding: const EdgeInsets.only( bottom: 80.0),
-
-                      child:ClipRRect(
+                       Padding(
+                       padding: const EdgeInsets.only( bottom: 80.0),
+                       child:ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: ExpansionTile(
                           tilePadding: EdgeInsets.only(left: 10, right: 17),

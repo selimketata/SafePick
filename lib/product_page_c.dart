@@ -10,26 +10,6 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../services/api_service_C.dart';
 import 'Details3.dart';
 
-class cosmeticsProductPage extends StatelessWidget {
-  const cosmeticsProductPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            ProductPageC(productId: 10181033056),
-            MyDraggableSheet(
-                child: Alternative()), // Ajouter ici le widget Alternative
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class ProductPageC extends StatelessWidget {
   final int productId;
@@ -81,7 +61,8 @@ class ProductPageC extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
+      body: Stack(
+          children: [ Padding(
         padding: const EdgeInsets.only(
             top: 0.0, left: 16.0, right: 16.0, bottom: 16.0),
         child: SingleChildScrollView(
@@ -538,7 +519,9 @@ class ProductPageC extends StatelessWidget {
                               .toList(),
                         ).animate().fade(duration: 550.ms).slideY(),
                       ),
+
                     ],
+
                   );
                 } else {
                   return Text("No product data available");
@@ -547,10 +530,15 @@ class ProductPageC extends StatelessWidget {
             ),
           ),
         ),
+          ),
+            MyDraggableSheet(
+                child: Alternative()), // Ajouter ici le widget Alternative
+          ],
       ),
     );
   }
 }
+
 
 Widget buildInfoRow(String title, dynamic value) {
   // Check if value is null or an empty list
@@ -637,7 +625,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.2:8000/alternatives/food/65fe2de7b21e74abad62ecba/'));
+          'http://192.168.1.2:8000/alternatives/cosmetics//'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
