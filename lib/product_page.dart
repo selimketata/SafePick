@@ -216,8 +216,7 @@ class ProductPage extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                image: AssetImage(
-                                    'images/approuver.png'), // Replace 'assets/small_image.png' with your image path
+                                image: AssetImage('assets/images/approuver.png'), // Replace 'assets/small_image.png' with your image path
                                 fit: BoxFit.cover,
                               ),
                             ),
