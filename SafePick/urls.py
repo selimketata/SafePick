@@ -18,5 +18,4 @@ urlpatterns = [
     path('get_user_profile/', views.get_user_profile, name='get_user_profile'),
     path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
     path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
