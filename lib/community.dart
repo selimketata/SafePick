@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'dart:convert';
+import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'ProfilePage.dart';
+import 'dart:async'; // Added for using Future
+import 'CommunityDiscussionPage.dart';
 
 class Community extends StatefulWidget {
   final String email;
@@ -15,11 +19,22 @@ class Community extends StatefulWidget {
 class _CommunityState extends State<Community> {
   late String username = "";
   late String photo = "";
+  List<String> socialsItems = [];
+  List<String> discoverMoreItems = [];
+  List<String> userCommunities = [];
 
   @override
   void initState() {
     super.initState();
     _fetchUserProfile();
+    _fetchUserCommunities();
+    _fetchCommunitiesNotUserExists();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Dispose any resources if needed
   }
 
   Future<void> _fetchUserProfile() async {
@@ -43,6 +58,71 @@ class _CommunityState extends State<Community> {
     }
   }
 
+  Future<void> _fetchUserCommunities() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/get_user_communities/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          userCommunities = List<String>.from(responseData['communities']);
+        });
+      } else {
+        throw Exception('Failed to load user communities');
+      }
+    } catch (e) {
+      print('Error fetching user communities: $e');
+    }
+  }
+
+  Future<void> _fetchCommunitiesNotUserExists() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/get_communities_not_user_exists/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          discoverMoreItems =
+              List<String>.from(responseData['communities_not_user_exists']);
+        });
+      } else {
+        throw Exception('Failed to load communities user is not part of');
+      }
+    } catch (e) {
+      print('Error fetching communities user is not part of: $e');
+    }
+  }
+
+  Future<void> _addEmailToCommunity(String communityName) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/add_email_to_community/'),
+        body: {'community_name': communityName, 'email': widget.email},
+      );
+
+      if (response.statusCode == 201) {
+        // Successfully joined the community
+        print('Successfully joined the community: $communityName');
+        // Refresh user communities
+        _fetchUserCommunities();
+        // Remove the community from the discover more list
+        setState(() {
+          discoverMoreItems.remove(communityName);
+        });
+      } else {
+        print('Failed to join the community: $communityName');
+      }
+    } catch (e) {
+      print('Error joining the community: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,343 +130,69 @@ class _CommunityState extends State<Community> {
         color: Color(0xFFFDF6EC),
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 100, left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hello, There!',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        fontFamily: 'SF Pro Text',
+            Container(
+              color: Color(0xFFFDF6EC),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100, left: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hello, There!',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontFamily: 'SF Pro Text',
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'How About Sharing Experience?',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black,
-                        fontFamily: 'SF Pro Text',
+                      SizedBox(height: 8),
+                      Text(
+                        'How About Sharing Experience?',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black,
+                          fontFamily: 'SF Pro Text',
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
             Positioned(
-              top: 180, // Adjust the position of the search bar
+              top: 180,
               left: 16,
+              right: 16, // Ensure it fits within the screen width
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 41,
-                        width: 300, // Adjust width to fit screen
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 2),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(width: 16),
-                            SizedBox(width: 8),
-                            Text(
-                              'Find a community',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: 'SF Pro Text',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Container(
-                        height: 41,
-                        width: 41,
-                        margin: EdgeInsets.only(left: 30),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF5CB287),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(Icons.search, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  SizedBox(height: 25), // Add vertical spacing here
-                  Row(
-                    children: [
-                      Text(
-                        'Socials',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'SF Pro Text',
-                        ),
-                      ),
-                      SizedBox(width: 300),
-                      Text(
-                        'See All',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'SF Pro Text',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 500),
-                  SizedBox(width: 100),
-                  Container(
-                    height: 2,
-                    width: 380,
-                    color: Color(0xFF5CB287),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 20), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Skin Care',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/chat-bulle.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 10), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Perfumes',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/chat-bulle.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 10), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Drinks',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/chat-bulle.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  SizedBox(height: 25), // Add vertical spacing here
-                  Row(
-                    children: [
-                      Text(
-                        'Discover More',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'SF Pro Text',
-                        ),
-                      ),
-                      SizedBox(width: 253),
-                      Text(
-                        'See All',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontFamily: 'SF Pro Text',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 500),
-                  SizedBox(width: 100),
-                  Container(
-                    height: 2,
-                    width: 380,
-                    color: Color(0xFF5CB287),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 20), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Coffee',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/plus.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 10), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Healthy Snacks',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/plus.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 300),
-                  SizedBox(height: 10), // Add vertical spacing
-                  Container(
-                    height: 55,
-                    width: 380,
-                    // D9D9D9 color with 35% opacity
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(217, 217, 217, 0.35),
-                      borderRadius: BorderRadius.circular(10),
-                    ), // Add padding to align content
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Chips',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: 'SF Pro Text',
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/images/plus.png', // Replace with your image path
-                          width: 30, // Adjust width as needed
-                          height: 30, // Adjust height as needed
-                        ),
-                      ],
-                    ),
-                  ),
+                  buildSectionTitle('Socials'),
+                  buildScrollableItemList(userCommunities, false),
+                  SizedBox(height: 20),
+                  buildSectionTitle('Discover More'),
+                  buildScrollableItemList(discoverMoreItems, true),
                 ],
               ),
             ),
             Positioned(
-              top: 35,
+              top: 50,
               right: 16,
-              child: Image.asset(
-                'assets/icons/$photo', // Replace with your image path
-                width: 42,
-                height: 42,
+              child: GestureDetector(
+                onTap: () {
+                  // Add your function here
+                  print('Bulle photo tapped');
+                },
+                child: Image.asset(
+                  'assets/images/chat-bulle.png',
+                  width: 30,
+                  height: 30,
+                ),
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -394,6 +200,7 @@ class _CommunityState extends State<Community> {
         backgroundColor: Color(0xFFFDF6EC),
         color: Color(0xFFECBE5C).withOpacity(0.9),
         animationDuration: Duration(milliseconds: 250),
+        index: 3, // Set the index to the current page
         items: [
           Container(
             width: 30,
@@ -409,11 +216,11 @@ class _CommunityState extends State<Community> {
           Icon(Icons.home),
           GestureDetector(
             onTap: () {
-              // Replace the current route with CommunityPage when pressed
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => Community(email: widget.email)),
+                  builder: (context) => Community(email: widget.email),
+                ),
               );
             },
             child: Container(
@@ -423,6 +230,102 @@ class _CommunityState extends State<Community> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildSectionTitle(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontFamily: 'SF Pro Text',
+              ),
+            ),
+          ],
+        ),
+        Divider(
+          color: Color(0xFF5CB287), // Adjust color as needed
+          thickness: 2, // Adjust thickness as needed
+        ),
+      ],
+    );
+  }
+
+  Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
+    return Container(
+      height: 240, // Limit the height to show only up to 4 items
+      child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: items
+              .map((item) => GestureDetector(
+                    onTap: () {
+                      // Navigate to the community page passing email and item
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CommunityDiscussionPage(email: widget.email, communityName: item),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 55,
+                      width: 380,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(217, 217, 217, 0.35),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontFamily: 'SF Pro Text',
+                            ),
+                          ),
+                          if (isDiscoverMore)
+                            GestureDetector(
+                              onTap: () => _addEmailToCommunity(item),
+                              child: Image.asset(
+                                'assets/images/plus.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            )
+                          else
+                            GestureDetector(
+                              onTap: () {
+                                // Add your function here
+                                print('Bulle photo tapped');
+                              },
+                              child: Image.asset(
+                                'assets/images/chat-bulle.png',
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }

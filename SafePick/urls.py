@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import register_user
+from .views import register_user, get_messages_in_community
 
 urlpatterns = [
     path('food/', views.foodApi),
@@ -16,5 +16,16 @@ urlpatterns = [
     path('user-profile/', views.UserProfileView.as_view(), name='user-profile'),
     path('login/', views.login, name='login'),
     path('get_user_profile/', views.get_user_profile, name='get_user_profile'),
+     path('add_community/', views.add_community, name='add_community'),
+      path('add_email_to_community/', views.add_email_to_community, name='add_email_to_community'),
+      path('get_community_members/', views.get_community_members, name='get_community_members'),
+path('get_user_communities/', views.get_user_communities, name='get_user_communities'),
+path('get_communities_not_user_exists/', views.get_communities_not_user_exists, name='get_communities_not_user_exists'),
+path('remove_community/', views.remove_community, name='remove_community'),
+path('remove_user_from_community/', views.remove_user_from_community, name='remove_user_from_community'),
+path('get_all_communities/', views.get_all_communities, name='get_all_communities'),
+path('create_message/', views.create_message, name='create_message'),
+ path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
