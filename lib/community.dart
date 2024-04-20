@@ -260,73 +260,67 @@ class _CommunityState extends State<Community> {
     );
   }
 
-  Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
+ Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
     return Container(
       height: 240, // Limit the height to show only up to 4 items
       child: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
-          children: items
-              .map((item) => GestureDetector(
-                    onTap: () {
-                      // Navigate to the community page passing email and item
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CommunityDiscussionPage(email: widget.email, communityName: item),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 55,
-                      width: 380,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(217, 217, 217, 0.35),
-                        borderRadius: BorderRadius.circular(10),
+          children: items.map((item) {
+            return Container(
+              height: 55,
+              width: 380,
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              margin: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(217, 217, 217, 0.35),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                  if (isDiscoverMore)
+                    GestureDetector(
+                      onTap: () => _addEmailToCommunity(item),
+                      child: Image.asset(
+                        'assets/images/plus.png',
+                        width: 30,
+                        height: 30,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            item,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: 'SF Pro Text',
-                            ),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to the community page passing email and item only if not "Discover More"
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunityDiscussionPage(email: widget.email, communityName: item),
                           ),
-                          if (isDiscoverMore)
-                            GestureDetector(
-                              onTap: () => _addEmailToCommunity(item),
-                              child: Image.asset(
-                                'assets/images/plus.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                            )
-                          else
-                            GestureDetector(
-                              onTap: () {
-                                // Add your function here
-                                print('Bulle photo tapped');
-                              },
-                              child: Image.asset(
-                                'assets/images/chat-bulle.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                        ],
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/chat-bulle.png',
+                        width: 30,
+                        height: 30,
                       ),
                     ),
-                  ))
-              .toList(),
+                ],
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
   }
+
 }
