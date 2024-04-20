@@ -1,15 +1,26 @@
 import React from 'react';
+import logo from "./../../Assets/logo.png";
+import "./Sidebar.css";
+import { Link } from 'react-router-dom';
+
 
 function Sidebar() {
     return (
       <div className="sidebar">
-        <h2>Sidebar</h2>
-        <ul>
-            <li>Products</li>
-            <li>Users</li>
-            <li>Communities</li>
-            <li>Notifications</li>
-        </ul>
+        <img src={logo}></img>
+        <h1>Safepick</h1>
+        <div className='pageslist'>
+            <Link to="/product" classname="page"><div>Products</div></Link>
+            <hr></hr>
+            <Link to="/user"><div>Users</div></Link>
+            <hr></hr>
+            <Link to="/community"><div>Community</div></Link>
+            <hr></hr>
+            <Link to="/notification"><div>Notifications</div></Link>
+            <hr></hr>
+            <Link to="/login"><div>Logout</div></Link>
+            <hr></hr>
+        </div>
       </div>
     );
   }

@@ -1,0 +1,51 @@
+.sidebar{
+    width: 20%;
+    background-color: #ECBE5C;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 25px;
+    height: 100vh;
+}
+
+.sidebar img{
+    margin-top: 15%;
+    width: 50%;
+}
+
+.pageslist{
+    margin-top: 20%;
+     padding: 0;
+     width: 90%;
+     box-sizing: border-box; 
+
+
+}
+
+
+.pageslist div{
+    padding-top: 10px ;
+    padding-bottom: 10px ;
+    padding-left: 10px;
+    font-size: large;
+    font-weight: 500;
+    width: 100%;
+    box-sizing: border-box; 
+    color: black;
+
+
+}
+
+.pageslist div:hover{
+    background-color: #FDF6EC;
+    cursor: pointer;
+    box-sizing: border-box; 
+    padding-left: 20px;
+    border-radius: 10px;
+
+}
+
+a{
+    text-decoration: none;
+}
