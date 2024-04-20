@@ -189,7 +189,7 @@ def get_user_profile(request):
         return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 
-def food_Alternatives(request, product_id):
+def food_Alternatives(request, product_code):
     if request.method == 'GET':
         try:
             # Connect to the MongoDB database
@@ -198,11 +198,11 @@ def food_Alternatives(request, product_id):
             collection = dbname['food']
 
             # Retrieve the specific product
-            specific_product = collection.find_one({'_id': ObjectId(product_id)})
+            specific_product = collection.find_one({'code': product_code})
 
             if specific_product:
                 # Retrieve the current product's score
-                current_product_score = specific_product.get('score', 0)
+                current_product_score = specific_product.get('nutriscore_score_out_of_100', 0)
 
                 # Try retrieving the specific category first
                 specific_category = specific_product.get('pnns_groups_1')
@@ -253,7 +253,7 @@ def food_Alternatives(request, product_id):
             return JsonResponse({'error': str(e)}, status=500)
 
 
-def cosmetics_Alternatives(request, product_id):
+def cosmetics_Alternatives(request, product_code):
     if request.method == 'GET':
         try:
             # Connect to the MongoDB database
@@ -262,7 +262,7 @@ def cosmetics_Alternatives(request, product_id):
             collection = dbname['cosmetics']
 
             # Retrieve the specific product
-            specific_product = collection.find_one({'_id': ObjectId(product_id)})
+            specific_product = collection.find_one({'code': product_code})
 
             if specific_product:
                 # Retrieve the current product's score
