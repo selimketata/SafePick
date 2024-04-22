@@ -31,12 +31,49 @@ import 'Details2.dart';
 //     );
 //   }
 // }
-
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
+  final String email;
   final int productId;
+
+  const ProductPage({Key? key, required this.email,required this.productId}) : super(key: key);
+
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+class _ProductPageState extends State<ProductPage> {
+  late String username = "";
+  late String photo = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+  Future<void> _fetchUserProfile() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          username = responseData['username'];
+          photo = responseData['photo_name'];
+        });
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
+
+
   final apiService = ApiService();
 
-  ProductPage({required this.productId});
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +126,7 @@ class ProductPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: FutureBuilder<ProductF>(
-              future: apiService.fetchProduct(productId),
+              future: apiService.fetchProduct(widget.productId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(

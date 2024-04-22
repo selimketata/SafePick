@@ -31,7 +31,7 @@ class _SecondPageState extends State<SecondPage> {
 
   late String photo = "";
 
-  late List<Function> _routes=[]; // List to store navigation functions
+  late List<Function> _routes = []; // List to store navigation functions
 
   @override
   void initState() {
@@ -42,11 +42,16 @@ class _SecondPageState extends State<SecondPage> {
 
   void _initializeRoutes() {
     _routes = [
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ScanApp())),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
-      () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+      () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
     ];
   }
 
@@ -88,11 +93,9 @@ class _SecondPageState extends State<SecondPage> {
             top: 42,
             left: 30,
             child: GestureDetector(
-              onTap: () {
-                // Navigate to help page
-              },
+              onTap: () {},
               child: Icon(
-                Icons.help_outline, // Change to the icon you want
+                Icons.help_outline,
                 size: 20,
                 color: Colors.black,
               ),
@@ -103,12 +106,24 @@ class _SecondPageState extends State<SecondPage> {
             right: 25,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ProfilePage(email: widget.email)));
               },
-              child: Image.asset(
-                'assets/icons/$photo', // Replace 'your_image.png' with your actual image path
-                width: 50, // Adjust width as needed
-                height: 50, // Adjust height as needed
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Placeholder or loading indicator
+                  CircularProgressIndicator(), // Replace this with your desired placeholder widget
+
+                  // Image asset
+                  Image.asset(
+                    photo.isNotEmpty
+                        ? 'assets/icons/$photo'
+                        : 'assets/images/amis.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ],
               ),
             ),
           ),
@@ -124,10 +139,10 @@ class _SecondPageState extends State<SecondPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 140), // Adding space here
+              const SizedBox(height: 140),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0), // Injected padding here
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       CarouselSlider.builder(
@@ -160,13 +175,13 @@ class _SecondPageState extends State<SecondPage> {
                                 onTap: () {
                                   print(
                                       "Navigating to ${_routes[index]} with email ${widget.email}");
-                                  _routes[index](); // Execute the function from the list
+                                  _routes[index]();
                                 },
                                 child: SizedBox(
-                                  height: 200, // Adjust the height here
+                                  height: 200,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0), // Add padding here
+                                        vertical: 10.0),
 
                                     child: Stack(
                                       children: [
@@ -215,7 +230,8 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 77, // Adjust these values
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              _routes[index](); // Execute the function from the list
+                                              _routes[
+                                                  index](); // Execute the function from the list
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -350,4 +366,3 @@ class _SecondPageState extends State<SecondPage> {
     );
   }
 }
-

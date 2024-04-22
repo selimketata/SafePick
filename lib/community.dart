@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
+import 'scan.dart';
 
 class Community extends StatefulWidget {
   final String email;
@@ -182,14 +183,13 @@ class _CommunityState extends State<Community> {
               top: 50,
               right: 16,
               child: GestureDetector(
-                onTap: () {
-                  // Add your function here
-               
-                },
+                onTap: () {},
                 child: Image.asset(
-                   'assets/icons/$photo', 
-                  width: 30,
-                  height: 30,
+                  photo.isNotEmpty
+                      ? 'assets/icons/$photo'
+                      : 'assets/images/amis.png',
+                  width: 50,
+                  height: 50,
                 ),
               ),
             )
@@ -208,10 +208,19 @@ class _CommunityState extends State<Community> {
             child: Image.asset('assets/images/robot.png'),
           ),
           Icon(Icons.favorite),
-          Container(
-            width: 30,
-            height: 30,
-            child: Image.asset('assets/images/code-barres-lu.png'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ScanApp(email: widget.email)),
+              );
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/code-barres-lu.png'),
+            ),
           ),
           Icon(Icons.home),
           GestureDetector(
@@ -260,7 +269,7 @@ class _CommunityState extends State<Community> {
     );
   }
 
- Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
+  Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
     return Container(
       height: 240, // Limit the height to show only up to 4 items
       child: SingleChildScrollView(
@@ -304,7 +313,8 @@ class _CommunityState extends State<Community> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CommunityDiscussionPage(email: widget.email, communityName: item),
+                            builder: (context) => CommunityDiscussionPage(
+                                email: widget.email, communityName: item),
                           ),
                         );
                       },
@@ -322,5 +332,4 @@ class _CommunityState extends State<Community> {
       ),
     );
   }
-
 }
