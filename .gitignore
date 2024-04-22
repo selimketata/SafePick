@@ -9,6 +9,8 @@
 .history
 .svn/
 migrate_working_dir/
+__pycache__/
+*.pyc
 
 # IntelliJ related
 *.iml
