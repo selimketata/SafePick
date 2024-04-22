@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'ProfilePage.dart';
+import 'Community.dart';
+import 'food.dart';
+import 'cosmetic.dart';
+import 'ChatBot.dart';
+import 'scan.dart';
 
 class SecondPage extends StatefulWidget {
-
   final String email;
 
   const SecondPage({Key? key, required this.email}) : super(key: key);
@@ -24,19 +28,47 @@ class _SecondPageState extends State<SecondPage> {
     'assets/images/icon4.png',
     'assets/images/icon5.png',
   ];
-  late String username = "";
+  List<String> _Names = [
+    'Communities',
+    'Aliments',
+    'Cosmetics',
+    'Chatbot',
+    'Scan',
+  ];
+  List<String> _Description = [
+    'Check the discussions about your intrests',
+    'Get to know the nutriments of aliments and check their alternatives',
+    'Get to know the ingredients of cosmetics and check their alternatives',
+    'Chat with our chatbot to get a customized response ',
+    'Scan your product directly',
+  ];
+
   late String photo = "";
+  late String email ="";
+
+  late List<Function> _routes=[]; // List to store navigation functions
 
   @override
   void initState() {
     super.initState();
     _fetchUserPhoto();
+    _initializeRoutes();
+  }
+
+  void _initializeRoutes() {
+    _routes = [
+    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
+    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ScanApp())),
+    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
+    ];
   }
 
   Future<void> _fetchUserPhoto() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.138:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -44,6 +76,7 @@ class _SecondPageState extends State<SecondPage> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
           photo = responseData['photo_name'];
+
         });
       } else {
         throw Exception('Failed to load user profile');
@@ -53,16 +86,16 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
-  List<String> _routes = [
-    '/community',
-    '/food',
-    '/cosmetic',
-    '/chatbot',
-    '/scan',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    if (_routes.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6EC),
       body: Stack(
@@ -86,15 +119,16 @@ class _SecondPageState extends State<SecondPage> {
             right: 25,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-  builder: (context) => ProfilePage(email: widget.email)));
-
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)));
               },
               child: Image.asset(
-                'assets/icons/$photo', // Replace 'your_image.png' with your actual image path
-                width: 50, // Adjust width as needed
-                height: 50, // Adjust height as needed
+                photo.isNotEmpty
+                    ? 'assets/icons/$photo'
+                    : 'assets/images/amis.png',
+                width: 50,
+                height: 50,
               ),
+
             ),
           ),
 
@@ -143,7 +177,9 @@ class _SecondPageState extends State<SecondPage> {
                             builder: (BuildContext context) {
                               return GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(context, _routes[index]);
+                                  print(
+                                      "Navigating to ${_routes[index]} with email ${widget.email}");
+                                  _routes[index](); // Execute the function from the list
                                 },
                                 child: SizedBox(
                                   height: 200, // Adjust the height here
@@ -158,39 +194,68 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 16, // Adjust these values
                                           child: Container(
                                             width: 180,
-                                            height:
-                                                220, // Adjust width of the slide
+                                            height: 220, // Adjust width and height of the container
                                             decoration: BoxDecoration(
-                                              color: Colors
-                                                  .white, // Add background color here
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
+                                              color: Colors.white, // Add background color here
+                                              borderRadius: BorderRadius.circular(50),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                  color: Colors.grey.withOpacity(0.5),
                                                   spreadRadius: 5,
                                                   blurRadius: 7,
                                                   offset: const Offset(0, 3),
                                                 ),
                                               ],
                                             ),
+                                            padding: EdgeInsets.only(top: 20,left:3.0,right:3.0), // Add padding to create space between container and text
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Flexible( // Use Flexible or Expanded to allow text to wrap
+                                                  child: Text(
+                                                    _Description[index],
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+
+                                                      color: Colors.black,
+                                                    ),
+                                                    textAlign: TextAlign.center, // Center text horizontally
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
+
 
                                         Positioned(
                                           top: 4, // Adjust these values
                                           left: 42, // Adjust these values
-                                          child: Opacity(
-                                            opacity: _currentIndex == index
-                                                ? 1.0
-                                                : 0.3,
-                                            child: Image.asset(
-                                              _icons[index],
-                                              width: 130.0,
-                                              height: 130.0,
-                                              fit: BoxFit.contain,
-                                            ),
+                                          child: Column(
+                                            children: [
+                                              Opacity(
+                                                opacity: _currentIndex == index ? 1.0 : 0.3,
+                                                child: Image.asset(
+                                                  _icons[index],
+                                                  width: 130.0,
+                                                  height: 130.0,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                              SizedBox(height: 5,),
+                                              Text(
+                                                _Names[index],
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontFamily: 'Harmonia Sans W01 Regular',
+                                                ),
+                                              ),
+
+
+                                            ],
                                           ),
                                         ),
                                         Positioned(
@@ -198,11 +263,7 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 77, // Adjust these values
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              String secondPageRoute =
-                                                  _routes[index];
-
-                                              Navigator.pushNamed(
-                                                  context, secondPageRoute);
+                                              _routes[index](); // Execute the function from the list
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -337,3 +398,4 @@ class _SecondPageState extends State<SecondPage> {
     );
   }
 }
+

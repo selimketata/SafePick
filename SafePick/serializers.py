@@ -35,3 +35,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['id', 'username', 'email', 'photo_name']
 
+# serializers.py
+
+from rest_framework import serializers
+from .models import Community
+
+class CommunitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = [ 'community_name']
+from rest_framework import serializers
+from .models import CommunityMember
+
+class CommunityMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommunityMember
+        fields = [ 'community_name', 'email']

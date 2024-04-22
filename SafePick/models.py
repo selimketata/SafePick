@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 
+
+
 class ProductF(models.Model):
     _id = models.CharField(max_length=100, primary_key=True)
     code = models.BigIntegerField(null=True)
@@ -192,3 +194,32 @@ class UserProfile(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_staff
 
+# models.py
+
+from django.db import models
+
+class Community(models.Model):
+    community_name = models.CharField(max_length=100, unique=True)
+ 
+
+    def __str__(self):
+        return self.community_name
+
+class CommunityMember(models.Model):
+    community_name = models.CharField(max_length=100, unique=True)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.email
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+class Message(models.Model):
+    email = models.CharField(max_length=100)
+    community_name = models.CharField(max_length=100, unique=True)
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.community_name
