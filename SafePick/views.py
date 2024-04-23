@@ -13,9 +13,11 @@ from .serializers import UserRegistrationSerializer, UserProfileSerializer
 from .models import UserProfile
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
 
 
 
+from bson import ObjectId
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -573,3 +575,46 @@ def cosmetics_Alternatives(request, product_code):
                 return JsonResponse({'error': 'Product not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+
+
+
+from django.http import JsonResponse
+import json
+from bson import ObjectId
+import pymongo
+from django.conf import settings
+
+def delete_message(request):
+    if request.method == 'DELETE':
+        try:
+            # Parse the request body to get the message_id
+            data = json.loads(request.body)
+            message_id = data.get('message_id')
+
+            if not message_id:
+                return JsonResponse({'error': 'Message ID not provided in the request body'}, status=400)
+
+            # Connect to MongoDB
+            my_client = pymongo.MongoClient(settings.DB_NAME)
+            dbname = my_client['Safepick']
+            collection = dbname['SafePick_message']
+
+            # Convert message_id to ObjectId
+            message_id = ObjectId(message_id)
+
+            # Check if the message exists
+            message = collection.find_one({'_id': message_id})
+            if message:
+                # Delete the message
+                collection.delete_one({'_id': message_id})
+                return JsonResponse({'message': 'Message deleted successfully'}, status=200)
+            else:
+                return JsonResponse({'error': 'Message not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format in the request body'}, status=400)
+        except pymongo.errors.PyMongoError as e:
+            return JsonResponse({'error': f'MongoDB error: {e}'}, status=500)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)

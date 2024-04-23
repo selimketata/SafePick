@@ -28,6 +28,8 @@ urlpatterns = [
     path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
     path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
     path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
+    path('delete_message/', views.delete_message, name='delete_message'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
