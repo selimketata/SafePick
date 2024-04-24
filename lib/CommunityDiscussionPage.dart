@@ -193,7 +193,7 @@ Widget _buildTextComposer() {
   }
 
   Future<void> _sendMessage(String text) async {
-    final url = 'http://192.168.1.16:9000/create_message/';
+    final url = 'http://192.168.1.72:9000/create_message/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -212,7 +212,7 @@ Widget _buildTextComposer() {
   }
 
   Future<String> _fetchUserProfile(String email) async {
-    final url = 'http://192.168.1.16:9000/get_user_profile/';
+    final url = 'http://192.168.1.72:9000/get_user_profile/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -230,7 +230,7 @@ Widget _buildTextComposer() {
   }
 
   Future<void> _fetchDiscussionHistory(String communityName) async {
-    final url = 'http://192.168.1.16:9000/get_messages_in_community/';
+    final url = 'http://192.168.1.72:9000/get_messages_in_community/';
     final response = await http.post(
       Uri.parse(url),
       body: {

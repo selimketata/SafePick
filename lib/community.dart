@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
+import 'scan.dart';
 
 class Community extends StatefulWidget {
   final String email;
@@ -40,7 +41,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.72:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -61,7 +62,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserCommunities() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/get_user_communities/'),
+        Uri.parse('http://192.168.1.72:9000/get_user_communities/'),
         body: {'email': widget.email},
       );
 
@@ -81,7 +82,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchCommunitiesNotUserExists() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/get_communities_not_user_exists/'),
+        Uri.parse('http://192.168.1.72:9000/get_communities_not_user_exists/'),
         body: {'email': widget.email},
       );
 
@@ -102,7 +103,7 @@ class _CommunityState extends State<Community> {
   Future<void> _addEmailToCommunity(String communityName) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/add_email_to_community/'),
+        Uri.parse('http://192.168.1.72:9000/add_email_to_community/'),
         body: {'community_name': communityName, 'email': widget.email},
       );
 
@@ -182,10 +183,7 @@ class _CommunityState extends State<Community> {
               top: 50,
               right: 16,
               child: GestureDetector(
-                onTap: () {
-                  // Add your function here
-               
-                },
+                onTap: () {},
                 child: Image.asset(
                   photo.isNotEmpty
                       ? 'assets/icons/$photo'
@@ -210,10 +208,19 @@ class _CommunityState extends State<Community> {
             child: Image.asset('assets/images/robot.png'),
           ),
           Icon(Icons.favorite),
-          Container(
-            width: 30,
-            height: 30,
-            child: Image.asset('assets/images/code-barres-lu.png'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ScanApp(email: widget.email)),
+              );
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/code-barres-lu.png'),
+            ),
           ),
           Icon(Icons.home),
           GestureDetector(
@@ -262,7 +269,7 @@ class _CommunityState extends State<Community> {
     );
   }
 
- Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
+  Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
     return Container(
       height: 240, // Limit the height to show only up to 4 items
       child: SingleChildScrollView(
@@ -306,7 +313,8 @@ class _CommunityState extends State<Community> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CommunityDiscussionPage(email: widget.email, communityName: item),
+                            builder: (context) => CommunityDiscussionPage(
+                                email: widget.email, communityName: item),
                           ),
                         );
                       },
@@ -324,5 +332,4 @@ class _CommunityState extends State<Community> {
       ),
     );
   }
-
 }

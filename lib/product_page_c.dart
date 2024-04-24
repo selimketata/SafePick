@@ -628,7 +628,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.16:9000/alternatives/cosmetics//'));
+          'http://192.168.1.72:9000/alternatives/cosmetics//'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data

@@ -9,7 +9,7 @@ import 'cosmetic.dart';
 import 'food.dart';
 
 import 'scan.dart';
-import 'package:flutter/material.dart';
+
 
 class ErrorPage extends StatelessWidget {
   final String message;
@@ -41,9 +41,11 @@ class MyApp extends StatelessWidget {
         '/': (context) => LiquidSwipePage(),
         '/chatbot': (context) => const chatbot(),
         '/cosmetic': (context) => const cosmetic(),
-        '/scan': (context) => const ScanApp(),
+        '/scan': (context) => ScanApp(
+            email: ModalRoute.of(context)!.settings.arguments as String),
         '/food': (context) => const food(),
-        '/community': (context) => Community(email: ModalRoute.of(context)!.settings.arguments as String),
+        '/community': (context) => Community(
+            email: ModalRoute.of(context)!.settings.arguments as String),
       },
     );
   }

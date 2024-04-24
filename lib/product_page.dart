@@ -11,13 +11,69 @@ import '../services/api_service.dart';
 import 'Details1.dart';
 import 'Details2.dart';
 
-
-
-class ProductPage extends StatelessWidget {
+// class foodProductPage extends StatelessWidget {
+//   const foodProductPage({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: Scaffold(
+//         backgroundColor: Colors.black,
+//         body: Stack(
+//           children: [
+//             ProductPage(productId: 26400163909),
+//             MyDraggableSheet(
+//                 child: Alternative()), // Ajouter ici le widget Alternative
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+class ProductPage extends StatefulWidget {
+  final String email;
   final int productId;
+
+  const ProductPage({Key? key, required this.email,required this.productId}) : super(key: key);
+
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+class _ProductPageState extends State<ProductPage> {
+  late String username = "";
+  late String photo = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+  Future<void> _fetchUserProfile() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          username = responseData['username'];
+          photo = responseData['photo_name'];
+        });
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
+
+
   final apiService = ApiService();
 
-  ProductPage({required this.productId});
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +126,7 @@ class ProductPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: FutureBuilder<ProductF>(
-              future: apiService.fetchProduct(productId),
+              future: apiService.fetchProduct(widget.productId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -83,9 +139,6 @@ class ProductPage extends StatelessWidget {
                   final image = snapshot.data!.backgroundRemovedImage;
                   Uint8List byte = base64Decode(image!);
                   final nutrientMap = snapshot.data!.nutrientMap;
-
-
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -466,7 +519,7 @@ class ProductPage extends StatelessWidget {
         ),
       ),
             MyDraggableSheet(
-                child: Alternative()), // Ajouter ici le widget Alternative
+                child: Alternative( productId : widget.productId )), // Ajouter ici le widget Alternative
           ],
       ),
     );
@@ -513,6 +566,11 @@ Widget buildInfoRow(String title, dynamic value) {
 }
 
 class Alternative extends StatelessWidget {
+  final int productId;
+  const Alternative({Key? key, required this.productId}) : super(key: key);
+
+
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -547,7 +605,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.16:9000/alternatives/food/26400163909/'));
+          'http://192.168.1.72:9000/alternatives/food/$productId/'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
@@ -596,7 +654,7 @@ class BottomSheetDummyUI extends StatelessWidget {
                         base64Decode(img),
                         width: 100,
                         height: 100,
-                        fit: BoxFit.cover,
+                        
                       )
                     : Container(), // Display an empty container if image data is empty
               ),

@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/MainPage_F.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'ProfilePage.dart';
@@ -28,6 +29,52 @@ class _SecondPageState extends State<SecondPage> {
     'assets/images/icon4.png',
     'assets/images/icon5.png',
   ];
+
+  late String photo = "";
+
+  late List<Function> _routes = []; // List to store navigation functions
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserPhoto();
+    _initializeRoutes();
+  }
+
+  void _initializeRoutes() {
+    _routes = [
+      () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => Community(email: widget.email))),
+      () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => mainpagef(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+    ];
+  }
+
+  Future<void> _fetchUserPhoto() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.72:9000/get_user_profile/'),
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          photo = responseData['photo_name'];
+        });
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
   List<String> _Names = [
     'Communities',
     'Aliments',
@@ -42,49 +89,6 @@ class _SecondPageState extends State<SecondPage> {
     'Chat with our chatbot to get a customized response ',
     'Scan your product directly',
   ];
-
-  late String photo = "";
-  late String email ="";
-
-  late List<Function> _routes=[]; // List to store navigation functions
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserPhoto();
-    _initializeRoutes();
-  }
-
-  void _initializeRoutes() {
-    _routes = [
-    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
-    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ScanApp())),
-    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
-    () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ScanApp())),
-    ];
-  }
-
-  Future<void> _fetchUserPhoto() async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
-        body: {'email': widget.email},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        setState(() {
-          photo = responseData['photo_name'];
-
-        });
-      } else {
-        throw Exception('Failed to load user profile');
-      }
-    } catch (e) {
-      print('Error fetching user profile: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +108,9 @@ class _SecondPageState extends State<SecondPage> {
             top: 42,
             left: 30,
             child: GestureDetector(
-              onTap: () {
-                // Navigate to help page
-              },
+              onTap: () {},
               child: Icon(
-                Icons.help_outline, // Change to the icon you want
+                Icons.help_outline,
                 size: 20,
                 color: Colors.black,
               ),
@@ -119,16 +121,25 @@ class _SecondPageState extends State<SecondPage> {
             right: 25,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ProfilePage(email: widget.email)));
               },
-              child: Image.asset(
-                photo.isNotEmpty
-                    ? 'assets/icons/$photo'
-                    : 'assets/images/amis.png',
-                width: 50,
-                height: 50,
-              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Placeholder or loading indicator
+                  CircularProgressIndicator(), // Replace this with your desired placeholder widget
 
+                  // Image asset
+                  Image.asset(
+                    photo.isNotEmpty
+                        ? 'assets/icons/$photo'
+                        : 'assets/images/amis.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -143,10 +154,10 @@ class _SecondPageState extends State<SecondPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 140), // Adding space here
+              const SizedBox(height: 140),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0), // Injected padding here
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       CarouselSlider.builder(
@@ -179,7 +190,7 @@ class _SecondPageState extends State<SecondPage> {
                                 onTap: () {
                                   print(
                                       "Navigating to ${_routes[index]} with email ${widget.email}");
-                                  _routes[index](); // Execute the function from the list
+                                  _routes[index]();
                                 },
                                 child: SizedBox(
                                   height: 200, // Adjust the height here
@@ -228,7 +239,6 @@ class _SecondPageState extends State<SecondPage> {
                                           ),
                                         ),
 
-
                                         Positioned(
                                           top: 4, // Adjust these values
                                           left: 42, // Adjust these values
@@ -263,7 +273,8 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 77, // Adjust these values
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              _routes[index](); // Execute the function from the list
+                                              _routes[
+                                                  index](); // Execute the function from the list
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -398,4 +409,3 @@ class _SecondPageState extends State<SecondPage> {
     );
   }
 }
-
