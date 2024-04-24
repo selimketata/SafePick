@@ -431,19 +431,81 @@ def get_messages_in_community(request):
             # Query all messages for the specified community
             messages = Message.objects.filter(community_name=community_name).order_by('timestamp')
 
-            # Organize messages by timestamp
-            messages_by_timestamp = []
+            # Serialize messages
+            serialized_messages = []
             for message in messages:
-                messages_by_timestamp.append({
+                serialized_message = {
                     "email": message.email,
                     "content": message.content,
                     "timestamp": message.timestamp
-                })
+                }
+                serialized_messages.append(serialized_message)
 
             # Construct the response JSON object
             response_data = {
                 "community_name": community_name,
-                "messages": messages_by_timestamp
+                "messages": serialized_messages,
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Message.DoesNotExist:
+            return Response({"error": "No messages found for the specified community"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        community_name = request.data.get('community_name')
+
+        if not community_name:
+            return Response({"error": "Community name is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Query all messages for the specified community
+            messages = Message.objects.filter(community_name=community_name).order_by('timestamp')
+
+            # Convert queryset to list of dictionaries
+            messages_data = []
+            for message in messages:
+                message_data = {
+                    "_id" : str(message.id),  # Convert ID to string if needed
+                    "email": message.email,
+                    "content": message.content,
+                    "timestamp": message.timestamp
+                }
+                messages_data.append(message_data)
+
+            # Construct the response JSON object
+            response_data = {
+                "community_name": community_name,
+                "messages": messages_data,
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+        except Message.DoesNotExist:
+            return Response({"error": "No messages found for the specified community"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        community_name = request.data.get('community_name')
+
+        if not community_name:
+            return Response({"error": "Community name is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Query all messages for the specified community
+            messages = Message.objects.filter(community_name=community_name).order_by('timestamp')
+
+            # Organize messages by timestamp
+            # messages_by_timestamp = []
+            # for message in messages:
+            #     messages_by_timestamp.append({
+            #         "_id" : message.id, 
+            #         "email": message.email,
+            #         "content": message.content,
+            #         "timestamp": message.timestamp
+            #     })
+
+            # Construct the response JSON object
+            response_data = {
+                "community_name": community_name,
+                "messages": messages,
             }
 
             return Response(response_data, status=status.HTTP_200_OK)
@@ -583,30 +645,33 @@ import json
 from bson import ObjectId
 import pymongo
 from django.conf import settings
+from datetime import datetime
+
 
 def delete_message(request):
     if request.method == 'DELETE':
         try:
-            # Parse the request body to get the message_id
+            # Parse the request body to get the email and timestamp
             data = json.loads(request.body)
-            message_id = data.get('message_id')
+            email = data.get('email')
+            timestamp = data.get('timestamp')
+            timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
+            print(timestamp)
 
-            if not message_id:
-                return JsonResponse({'error': 'Message ID not provided in the request body'}, status=400)
+            if not email or not timestamp:
+                return JsonResponse({'error': 'Email or timestamp not provided in the request body'}, status=400)
 
             # Connect to MongoDB
             my_client = pymongo.MongoClient(settings.DB_NAME)
             dbname = my_client['Safepick']
             collection = dbname['SafePick_message']
 
-            # Convert message_id to ObjectId
-            message_id = ObjectId(message_id)
+            # Query the message based on email and timestamp
+            message = collection.find_one({'email': email, 'timestamp': timestamp})
 
-            # Check if the message exists
-            message = collection.find_one({'_id': message_id})
             if message:
                 # Delete the message
-                collection.delete_one({'_id': message_id})
+                collection.delete_one({'email': email, 'timestamp': timestamp})
                 return JsonResponse({'message': 'Message deleted successfully'}, status=200)
             else:
                 return JsonResponse({'error': 'Message not found'}, status=404)
