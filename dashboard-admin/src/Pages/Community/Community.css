@@ -35,3 +35,21 @@ table {
     background-color: #f2f2f2;
   }
   
+  .create-community-button{
+    background-color:#ECBE5C ;
+    border: 3px solid #ECBE5C;
+    border-radius: 50px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    color:black ;
+    font-weight: 700;
+  }
+
+  .create-community input{
+        background-color:#FDF6EC ;
+        border: 3px solid #ECBE5C;
+        border-radius: 50px;
+        padding: 10px 10px;
+        width:20%
+
+  }

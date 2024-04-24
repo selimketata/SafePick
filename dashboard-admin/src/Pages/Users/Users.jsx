@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -8,7 +10,7 @@ function Users() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get('http://192.168.1.2:8000/food/');
+        const response = await axios.get('http://192.168.1.69:8000/user-profile/');
         setUsers(response.data);
         setLoading(false);
       } catch (error) {
@@ -19,8 +21,12 @@ function Users() {
     fetchUsers();
   }, []);
 
+  const handleDeleteUser = (user) => {
+       console.log(user);
+  }
+
   return (
-    <div>
+    <div className='productdash'>
       <h2>User Dashboard</h2>
       {loading ? (
         <p>Loading...</p>
@@ -30,7 +36,8 @@ function Users() {
             <tr>
               <th>ID</th>
               <th>Email</th>
-              {/* Add more columns as needed */}
+              <th>Username</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -38,7 +45,8 @@ function Users() {
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.email}</td>
-                {/* Add more cells for additional columns */}
+                <td>{user.username}</td>
+                <td><FontAwesomeIcon icon={faTrash} onClick={() => handleDeleteUser(user)} /></td>
               </tr>
             ))}
           </tbody>

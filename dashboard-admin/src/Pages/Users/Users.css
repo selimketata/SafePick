@@ -1,0 +1,9 @@
+.productdash{
+    position: absolute;
+    top:0;
+    left:25%;
+    width: 70%;
+}
+body{
+    background-color: #FDF6EC;
+}
