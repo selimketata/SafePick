@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
+import 'package:flutter_application_2/Favorites.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
+import 'chatbot.dart';
 import 'scan.dart';
+import 'second_page.dart';
 
 class Community extends StatefulWidget {
   final String email;
@@ -23,6 +26,7 @@ class _CommunityState extends State<Community> {
   List<String> socialsItems = [];
   List<String> discoverMoreItems = [];
   List<String> userCommunities = [];
+  int _activeIndex = 0;  // Default to the first tab
 
   @override
   void initState() {
@@ -204,47 +208,72 @@ class _CommunityState extends State<Community> {
           ],
         ),
       ),
+
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Color(0xFFFDF6EC),
         color: Color(0xFFECBE5C).withOpacity(0.9),
         animationDuration: Duration(milliseconds: 250),
-        index: 3, // Set the index to the current page
-        items: [
-          Container(
-            width: 30,
-            height: 30,
-            child: Image.asset('assets/images/robot.png'),
-          ),
-          Icon(Icons.favorite),
+        index: _activeIndex,
+        items: <Widget>[
           GestureDetector(
             onTap: () {
+              setState(() {
+                _activeIndex = 0;
+              });
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => ScanApp(email: widget.email)),
+                MaterialPageRoute(builder: (context) => ChatbotPage()),
               );
             },
-            child: Container(
-              width: 30,
-              height: 30,
-              child: Image.asset('assets/images/code-barres-lu.png'),
-            ),
+            child: Icon(Icons.chat),
           ),
-          Icon(Icons.home),
           GestureDetector(
             onTap: () {
-              Navigator.pushReplacement(
+              setState(() {
+                _activeIndex = 1;
+              });
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => Community(email: widget.email),
-                ),
+                MaterialPageRoute(builder: (context) => FavoritesPage(email: widget.email)),
               );
             },
-            child: Container(
-              width: 30,
-              height: 30,
-              child: Image.asset('assets/images/amis.png'),
-            ),
+            child: Icon(Icons.favorite),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _activeIndex = 2;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ScanPage(email: widget.email)),
+              );
+            },
+            child: Icon(Icons.camera),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _activeIndex = 3;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage(email: widget.email)),
+              );
+            },
+            child: Icon(Icons.home),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _activeIndex = 4;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CommunityPage(email: widget.email)),
+              );
+            },
+            child: Icon(Icons.group),
           ),
         ],
       ),

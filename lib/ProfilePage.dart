@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'UpdateUsernamePage.dart';
+import "sign in.dart";
+import "UpdateUserpasswordPage.dart";
 
 class ProfilePage extends StatefulWidget {
   final String email;
@@ -19,14 +22,47 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+
     _fetchUserProfile();
+  }
+
+  void _removeAccount() async {
+    final Uri apiUrl = Uri.parse(
+        'http://192.168.1.15:9000/delete_user_profile/'); // Adjust URL as necessary
+
+    try {
+      final response = await http.delete(
+        apiUrl,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'email': widget.email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => SignIn()),
+              (Route<dynamic> route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to remove account. Please try again.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
   }
 
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
         body: {'email': widget.email},
       );
 
@@ -52,9 +88,8 @@ class _ProfilePageState extends State<ProfilePage> {
     final double imageRadius = 180; // Set the radius of the image circle
 
     return Scaffold(
-     
       backgroundColor:
-          Color(0xFFFDF6EC), // Set the background color of the scaffold
+      Color(0xFFFDF6EC), // Set the background color of the scaffold
       body: Stack(
         children: [
           Positioned(
@@ -90,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
               decoration: BoxDecoration(
                 color: Colors.white, // Set the color of the rectangle to white
                 borderRadius:
-                    BorderRadius.circular(20), // Set circular border radius
+                BorderRadius.circular(20), // Set circular border radius
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -104,13 +139,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 20), // Adjust the height as needed
-                  _buildMenuItem(context, Icons.edit, 'Edit Profile',
+                  _buildMenuItem(context, Icons.edit, 'Edit User Name',
                       screenSize.width - 90),
                   SizedBox(height: 20),
                   _buildMenuItem(context, Icons.lock, 'Change Password',
                       screenSize.width - 90),
                   SizedBox(height: 20),
-                  _buildMenuItem(context, Icons.email, 'Change Email Adress',
+                  _buildMenuItem(context, Icons.person_remove, 'Remove account',
                       screenSize.width - 90),
                   SizedBox(height: 20),
                   _buildMenuItem(
@@ -140,8 +175,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   20), // Add padding to create space around the image
               child: ClipOval(
                 child: Image.asset(
-                  'assets/icons/$photo',
-                  fit: BoxFit.cover, // Cover the entire circle with the image
+                  photo.isNotEmpty
+                      ? 'assets/icons/$photo'
+                      : 'assets/images/amis.png',
+                  width: 50,
+                  height: 50,
                 ),
               ),
             ),
@@ -159,7 +197,6 @@ class _ProfilePageState extends State<ProfilePage> {
               child: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
-                  // Navigate to the previous page
                   Navigator.of(context).pop();
                 },
               ),
@@ -170,59 +207,95 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildMenuItem(
-      BuildContext context, IconData iconData, String text, double width,
-      {Color textColor = Colors.black}) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            // Add navigation logic here
-            // For example:
-            // Navigator.of(context).push(MaterialPageRoute(builder: (context) => AnotherPage()));
-          },
-          child: Container(
-            height: 59,
-            width: width,
-            color: Color(0xFFD9D9D9), // Set the color of the rectangle
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Icon(
-                    iconData,
-                    color: iconData == Icons.logout
-                        ? Colors.red
-                        : Colors.black, // Set the color of the icon
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w300,
-                      fontFamily: 'HarmoniaSansW01-Bold,Regular',
-                      color: textColor, // Set the color of the text
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Icon(
-                    Icons.arrow_forward, // Custom icon for navigation
-                    color: iconData == Icons.logout
-                        ? Colors.red
-                        : Colors.black, // Set the color of the icon
-                  ),
-                ),
-              ],
+  Widget _buildMenuItem(BuildContext context, IconData iconData, String text, double width, {Color textColor = Colors.black}) {
+    return GestureDetector(
+      onTap: () async {
+        if (text == 'Edit User Name') {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => UpdateUsernamePage(email: widget.email),
             ),
-          ),
-        ),
-        SizedBox(height: 0.08), // Reduce the space between each item
-      ],
+          ).then((value) {
+            if (value == true) {
+              _fetchUserProfile(); // Refresh the profile data
+            }
+          });
+        } else if (text == 'Change Password') {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => UpdateUserPasswordPage(email: widget.email),
+            ),
+          );
+        } else if (text == 'Remove account') {
+          bool confirmed = await _showConfirmDialog(
+              context,
+              'Remove Account',
+              'Are you sure you want to remove your account? This action cannot be undone.'
+          );
+          if (confirmed) {
+            _removeAccount();
+          }
+        } else if (text == 'Log Out') {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => SignIn()),
+                (Route<dynamic> route) => false,
+          );
+        }
+      },
+      child: _menuItemContent(iconData, text, width, textColor),
     );
+  }
+
+  Widget _menuItemContent(
+      IconData iconData, String text, double width, Color textColor) {
+    return Container(
+      height: 59,
+      width: width,
+      color: Color(0xFFD9D9D9),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Icon(iconData, color: textColor),
+          ),
+          Expanded(
+            child: Text(text,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    color: textColor)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Icon(Icons.arrow_forward, color: textColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showConfirmDialog(
+      BuildContext context, String title, String content) async {
+    return (await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text('No'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: Text('Yes', style: TextStyle(color: Colors.red)),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    )) ??
+        false; // Handle null by treating it as "false"
   }
 }
