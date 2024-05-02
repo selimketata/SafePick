@@ -47,6 +47,7 @@ class _SecondPageState extends State<SecondPage> {
           builder: (context) => Community(email: widget.email))),
       () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => mainpagef(email: widget.email))),
+
       () => Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
       () => Navigator.of(context)
@@ -60,6 +61,7 @@ class _SecondPageState extends State<SecondPage> {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
+
         body: {'email': widget.email},
       );
 
@@ -75,6 +77,7 @@ class _SecondPageState extends State<SecondPage> {
       print('Error fetching user profile: $e');
     }
   }
+
   List<String> _Names = [
     'Communities',
     'Aliments',
@@ -89,6 +92,7 @@ class _SecondPageState extends State<SecondPage> {
     'Chat with our chatbot to get a customized response ',
     'Scan your product directly',
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -193,10 +197,10 @@ class _SecondPageState extends State<SecondPage> {
                                   _routes[index]();
                                 },
                                 child: SizedBox(
-                                  height: 200, // Adjust the height here
+                                  height: 200,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0), // Add padding here
+                                        vertical: 10.0),
 
                                     child: Stack(
                                       children: [

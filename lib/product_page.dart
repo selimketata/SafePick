@@ -50,11 +50,13 @@ class _ProductPageState extends State<ProductPage> {
     super.initState();
     _fetchUserProfile();
     sendcontentbased();
+
   }
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
+
         body: {'email': widget.email},
       );
 
@@ -84,6 +86,7 @@ class _ProductPageState extends State<ProductPage> {
       // Handle any errors here
     }
   }
+
 
 
 
@@ -536,6 +539,7 @@ class _ProductPageState extends State<ProductPage> {
       ),
             MyDraggableSheet(
                 child: Alternative( productId : widget.productId )), // Ajouter ici le widget Alternative
+
           ],
       ),
     );
@@ -622,6 +626,7 @@ class Alternative extends StatelessWidget {
     try {
       final response = await http.get(Uri.parse(
           'http://192.168.1.15:9000/alternatives/food/$productId/'));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
@@ -670,7 +675,8 @@ class BottomSheetDummyUI extends StatelessWidget {
                         base64Decode(img),
                         width: 100,
                         height: 100,
-                        
+
+
                       )
                     : Container(), // Display an empty container if image data is empty
               ),

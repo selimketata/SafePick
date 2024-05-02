@@ -51,6 +51,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffFDF6EC),
       appBar: AppBar(
         title: Text('Search Results for "${widget.query}"',
           style: TextStyle(

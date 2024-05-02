@@ -41,7 +41,9 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
+
         body: {'email': widget.email},
       );
 
@@ -62,7 +64,9 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserCommunities() async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.15:9000/get_user_communities/'),
+
         body: {'email': widget.email},
       );
 
@@ -82,7 +86,9 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchCommunitiesNotUserExists() async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.15:9000/get_communities_not_user_exists/'),
+
         body: {'email': widget.email},
       );
 
@@ -103,7 +109,9 @@ class _CommunityState extends State<Community> {
   Future<void> _addEmailToCommunity(String communityName) async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.15:9000/add_email_to_community/'),
+
         body: {'community_name': communityName, 'email': widget.email},
       );
 

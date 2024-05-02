@@ -29,6 +29,7 @@ class _ScanAppState extends State<ScanApp> {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
+
         body: {'email': widget.email},
       );
 
