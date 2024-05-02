@@ -16,6 +16,7 @@ urlpatterns = [
     path('user-profile/', views.UserProfileView.as_view(), name='user-profile'),
     path('login/', views.login, name='login'),
     path('get_user_profile/', views.get_user_profile, name='get_user_profile'),
+
      path('add_community/', views.add_community, name='add_community'),
       path('add_email_to_community/', views.add_email_to_community, name='add_email_to_community'),
       path('get_community_members/', views.get_community_members, name='get_community_members'),
@@ -28,9 +29,32 @@ path('create_message/', views.create_message, name='create_message'),
  path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
  path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
 path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
+
 path('search_messages_in_community/', views.search_messages_in_community, name='search_messages_in_community'),
 path('update_user_name/', views.update_user_name, name='update_user_name'),
 path('update_user_password/', views.update_user_password, name='update_user_password'),
 path('delete_user_profile/', views.delete_user_profile, name='delete_user_profile'),
+path('<str:email>/<int:code>/', views.update_user_code, name='update_user_code'),
+ path('food/category/<str:category>/', views.get_category_products, name='category_products'),
+ path('<str:email>/contentbased/', views.content_based_recommendation, name='content_based_recommendation'),
+path('food/search/', views.dynamic_collection_api, name='DynamicCollectionAPIView'),
+
+    path('add_community/', views.add_community, name='add_community'),
+    path('add_email_to_community/', views.add_email_to_community, name='add_email_to_community'),
+    path('get_community_members/', views.get_community_members, name='get_community_members'),
+    path('get_user_communities/', views.get_user_communities, name='get_user_communities'),
+    path('get_communities_not_user_exists/', views.get_communities_not_user_exists, name='get_communities_not_user_exists'),
+    path('remove_community/', views.remove_community, name='remove_community'),
+    path('remove_user_from_community/', views.remove_user_from_community, name='remove_user_from_community'),
+    path('get_all_communities/', views.get_all_communities, name='get_all_communities'),
+    path('create_message/', views.create_message, name='create_message'),
+    path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
+    path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
+    path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
+    path('delete_message/', views.delete_message, name='delete_message'),
+
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 

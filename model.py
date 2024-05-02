@@ -9,17 +9,13 @@ from pymongo import MongoClient
 nltk.download('punkt', quiet=True)
 nltk.download('wordnet', quiet=True)
 
-
 class FoodDataModel:
     def __init__(self, db_uri, db_name, collection_name):
-       
         self.client = MongoClient(db_uri)
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
         self.vectorizer = TfidfVectorizer()
-        self.documents, self.document_details = self.load_data()
-
-    # Rest of your class methods...
+        self.documents, self.document_details, self.tfidf_matrix = self.load_data()
 
     def preprocess_text(self, text):
         """Clean and preprocess text for vectorization."""
@@ -32,7 +28,7 @@ class FoodDataModel:
         documents = []
         document_details = []
         for doc in self.collection.find():
-            processed_text = self.preprocess_text(doc.get('product_name', ''))
+            processed_text = self.preprocess_text(doc.get('product_name', 'Unknown'),)  # Assuming 'product_name' is always present
             documents.append(processed_text)
             details = {
         'pnns_groups_1': doc.get('pnns_groups_1', 'Unknown'),
@@ -62,17 +58,14 @@ class FoodDataModel:
         
         # Create the TF-IDF matrix after all documents are processed
         tfidf_matrix = self.vectorizer.fit_transform(documents)
-        return documents, document_details
+        return documents, document_details, tfidf_matrix
 
     def search_query(self, query):
-       
         query_text = self.preprocess_text(query)
         query_vector = self.vectorizer.transform([query_text])
         similarity_scores = cosine_similarity(query_vector, self.tfidf_matrix)
 
         # Extract top 5 similar items
         top_indices = similarity_scores.argsort()[0][-5:][::-1]
-        results = [{'product_name': self.document_details[idx]['product_name']} for idx in top_indices]
+        results = [self.document_details[idx] for idx in top_indices]  # Now returning full details
         return results
-
-
