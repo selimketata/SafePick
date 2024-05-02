@@ -3,9 +3,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'ProfilePage.dart';
+
 import 'dart:async'; // Added for using Future
-import 'CommunityDiscussionPage.dart';
+
 import 'scan.dart';
 
 class Community extends StatefulWidget {
