@@ -7,6 +7,7 @@ import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:flutter_application_2/product_page_forscan.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'SearchResultsPage.dart';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
@@ -23,28 +24,54 @@ class mainpagef extends StatefulWidget {
 
 class _mainpagefState extends State<mainpagef> {
   late String photo = "";
+  late String email = "";
   int _selectedIndex = 0;
   List<Product> products = [];
   List<String> productNames = [];
+  List<String> productNamescb = [];
+  List<Product> productscb = [];
+  List<Product> _products = [];
+
+  final TextEditingController _controller = TextEditingController();
+
+  void _navigateToSearchResults(String query) {
+    if (query.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SearchResultsPage(email: widget.email,query: query),
+        ),
+      );
+    }
+  }
+
+
+
+
 
 
   @override
   void initState() {
     super.initState();
-    _fetchUserProfile();
-    // _fetchProductsByCategory(items[0]['text']);
+    initializeData();
+  }
+
+  void initializeData() async {
+    await _fetchUserProfile();  // Ensure this method fetches user profile and potentially sets 'email'
+    _fetchProductsByCategory(items[0]['text']);
+    _fetchcontentbased(email);
   }
 
   @override
   void dispose() {
     super.dispose();
+
     // Dispose any resources if needed
   }
 
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.72:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -52,6 +79,8 @@ class _mainpagefState extends State<mainpagef> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
           photo = responseData['photo_name'];
+          email = responseData['email'];
+          print(email);
         });
       } else {
         throw Exception('Failed to load user profile');
@@ -61,11 +90,12 @@ class _mainpagefState extends State<mainpagef> {
     }
   }
 
+
   Future<void> _fetchProductsByCategory(String category) async {
     print("Fetching products for category: $category");
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.72:9000/food/category/$category/'),
+        Uri.parse('http://192.168.1.15:9000/food/category/$category/'),
       );
 
       print("HTTP Response Code: ${response.statusCode}");
@@ -80,11 +110,40 @@ class _mainpagefState extends State<mainpagef> {
           productNames.clear();
           for (var productJson in productList) {
             Product product = Product.fromJson(productJson);
-            products.add(
-                product); // Add the product object to the products list
+            products.add(product); // Add the product object to the products list
             productNames.add(product.productName);
           }
           print(productNames);
+        });
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+  }
+
+  Future<void> _fetchcontentbased(String email) async {
+    print("Fetching products for email: $email");
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.1.15:9000/${email}/contentbased/'),
+      );
+
+      print("HTTP Response Code: ${response.statusCode}");
+      print("HTTP Response Body: ${response
+          .body}"); // This will show exactly what the API returned
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> productList = responseData['products'];
+        setState(() {
+          for (var productJson in productList) {
+            Product product = Product.fromJson(productJson);
+            productscb.add(product); // Add the product object to the products list
+            productNamescb.add(product.productName);
+          }
+          print(productNamescb);
         });
       } else {
         throw Exception('Failed to load products');
@@ -156,30 +215,31 @@ class _mainpagefState extends State<mainpagef> {
             ),
           ),
           actions: [
-          Container(
-            margin: EdgeInsets.only(right: 10),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ProfilePage(email: widget.email)));
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Placeholder or loading indicator
-                CircularProgressIndicator(), // Replace this with your desired placeholder widget
-                // Image asset
-                Image.asset(
-                  photo.isNotEmpty
-                      ? 'assets/icons/$photo'
-                      : 'assets/images/amis.png',
-                  width: 50,
-                  height: 50,
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ProfilePage(email: widget.email)));
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Placeholder or loading indicator
+                    CircularProgressIndicator(),
+                    // Replace this with your desired placeholder widget
+                    // Image asset
+                    Image.asset(
+                      photo.isNotEmpty
+                          ? 'assets/icons/$photo'
+                          : 'assets/images/amis.png',
+                      width: 50,
+                      height: 50,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
 
           ],
         ),
@@ -219,18 +279,17 @@ class _mainpagefState extends State<mainpagef> {
             padding: EdgeInsets.only(top: 20, left: 16, right: 16),
             sliver: SliverToBoxAdapter(
               child: TextField(
+                controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Search',
                   prefixIcon: Icon(Icons.search),
                   filled: false,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 2.0,
-                    ),
+                    borderSide: BorderSide(color: Colors.black, width: 2.0),
                   ),
                 ),
+                onSubmitted: _navigateToSearchResults,
               ),
             ),
           ),
@@ -262,7 +321,6 @@ class _mainpagefState extends State<mainpagef> {
                         _selectedIndex = index;
                         _fetchProductsByCategory(items[index]['text']);
                       });
-
                     },
                     child: Container(
                       width: 100,
@@ -308,8 +366,36 @@ class _mainpagefState extends State<mainpagef> {
               ),
             ),
           ),
-
-          buildProductsSliver(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
+              child: Text(
+                'Recommended for you:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
+            ),
+          ),
+          buildProductsSliver(productNames: productNamescb, products: productscb),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
+              child: Text(
+                'Products:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
+            ),
+          ),
+          buildProductsSliver(productNames: productNames, products: products),
           // Call a method that returns a SliverList or SliverGrid
         ],
       ),
@@ -317,12 +403,14 @@ class _mainpagefState extends State<mainpagef> {
   }
 
 // Method to build the products section as a sliver
-  Widget buildProductsSliver() {
+  Widget buildProductsSliver({
+    required List<String> productNames,
+    required List<Product> products,
+  }) {
     return SliverPadding(
       padding: EdgeInsets.all(16.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-
               (BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(top: 4.0),

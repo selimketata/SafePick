@@ -554,34 +554,60 @@ from pymongo import MongoClient
 from pymongo.collection import ReturnDocument
 
 
+import pymongo
+from django.http import JsonResponse
+from pymongo.collection import ReturnDocument
+
 def update_user_code(request, email, code):
     my_client = pymongo.MongoClient(settings.DB_NAME)
     dbname = my_client['Safepick']
-    users=dbname["food.users"]
+    users = dbname["food.users"]
+
     try:
         # Ensure user exists or create a new one if not
-        users.update_one({'email': email}, {'$setOnInsert': {'email': email, 'codes': []}}, upsert=True)
-
-        # Attempt to increment the code's count if it exists
-        result = users.find_one_and_update(
-            {"email": email, "codes.code": code},
-            {"$inc": {"codes.$.count": 1}},
-            upsert=False,
+        user = users.find_one_and_update(
+            {'email': email},
+            {
+                '$setOnInsert': {
+                    'email': email,
+                    'codes': [],
+                    'user_id': None  # Updated below if it's a new user
+                }
+            },
+            upsert=True,
             return_document=ReturnDocument.AFTER
         )
 
-        if result is None:
+        # Assign new user_id if this is a new user
+        if user['user_id'] is None:
+            max_user = users.find_one(sort=[("user_id", pymongo.DESCENDING)])
+            max_user_id = max_user["user_id"] if max_user else 0
+            new_user_id = max_user_id + 1
+            users.update_one({'email': email}, {'$set': {'user_id': new_user_id}})
+
+        # Manage codes, ensuring there are no more than 6
+        if len(user['codes']) >= 6:
+            # Remove the oldest code
+            users.update_one({'email': email}, {'$pop': {'codes': -1}})  # $pop with -1 removes the first item
+
+        # Attempt to increment the code's count if it exists
+        result = users.update_one(
+            {"email": email, "codes.code": code},
+            {"$inc": {"codes.$.count": 1}},
+            upsert=False
+        )
+
+        if result.matched_count == 0:
             # The code does not exist, add it with a count of 1
-            result = users.find_one_and_update(
+            users.update_one(
                 {"email": email},
-                {"$push": {"codes": {"code": code, "count": 1}}},
-                upsert=True,
-                return_document=ReturnDocument.AFTER
+                {"$push": {"codes": {"code": code, "count": 1}}}
             )
 
-        return JsonResponse({"status": "success" }, safe=False)
+        return JsonResponse({"status": "success"}, safe=False)
     except Exception as e:
-        return JsonResponse({"status": "error"}, status=400)
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
 
 from django.http import JsonResponse
 import pymongo
@@ -638,4 +664,69 @@ def get_category_products(request, category):
 
     # Convert to JSON and return response
     return JsonResponse({"products": products}, safe=False)
+
+from django.http import JsonResponse
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+def content_based_recommendation(request, email):
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+
+    # Find the document in the recommendations collection by email
+    recommendations = db.food_recommendations.recommendations.find_one({"email": email})
+
+    # If no recommendations are found for the email, return an empty list
+    if not recommendations:
+        return JsonResponse({'error': 'No recommendations found for this email'}, status=404)
+
+    # Extract product codes
+    product_codes = recommendations['recommended_products']
+
+    # Fetch details from the food collection for each product code
+    product_details = []
+    for code in product_codes:
+        product = db.food.find_one({"code": code}, {'product_name': 1, 'nutriscore_score_out_of_100': 1, 'background_removed_image': 1})
+        if product:
+            product_details.append({
+                'product_name': product.get('product_name', ''),
+                'nutriscore_score_out_of_100': product.get('nutriscore_score_out_of_100', -1),
+                'background_removed_image': product.get('background_removed_image', '')
+            })
+    products = [serialize_doc(product) for product in product_details]
+
+
+    # Return the product details as JSON
+    return JsonResponse({'products': products})
+
+from django.conf import settings
+from pymongo import MongoClient
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+@api_view(['GET'])
+def dynamic_collection_api(request):
+    query = request.GET.get('q', '')
+
+    # Connect to MongoDB using settings
+    client = MongoClient(settings.DB_NAME)  # Make sure to use the correct settings attribute for your MongoDB URI
+    db = client['Safepick']
+    collection = db['food']
+
+    # Perform the query
+    if query:
+        search_results = list(collection.find({"product_name": {"$regex": query, "$options": "i"}}))
+        client.close()  # Important to close the connection
+        products = [serialize_doc(product) for product in search_results]
+
+
+    # You would still need to serialize the data here manually
+        return Response({"data": products})
+    else:
+        return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 

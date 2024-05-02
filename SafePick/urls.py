@@ -30,6 +30,10 @@ path('create_message/', views.create_message, name='create_message'),
 path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
 path('<str:email>/<int:code>/', views.update_user_code, name='update_user_code'),
  path('food/category/<str:category>/', views.get_category_products, name='category_products'),
+ path('<str:email>/contentbased/', views.content_based_recommendation, name='content_based_recommendation'),
+path('food/search/', views.dynamic_collection_api, name='DynamicCollectionAPIView'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

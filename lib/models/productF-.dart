@@ -18,11 +18,19 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     final image = base64Decode(json['background_removed_image']);
+    String productName = json['product_name'] as String? ?? 'No Name Available';
+    String id = json['id'] as String? ?? 'No Name Available';
+    int code = json['code'] as int? ?? 1 ;
+    int score = json['nutriscore_score_out_of_100'] as int? ?? 1;
+
+
+
+
     return Product(
-      id: json['_id'] as String,
-      code: json['code'] as int,
-      productName: json['product_name'] as String,
-      nutriScoreOutOf100: json['nutriscore_score_out_of_100'] as int,
+      id: id,
+      code: code,
+      productName: productName ,
+      nutriScoreOutOf100: score,
       backgroundImage: image,
     );
   }

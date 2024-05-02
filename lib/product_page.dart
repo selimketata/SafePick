@@ -35,6 +35,7 @@ class ProductPage extends StatefulWidget {
   final String email;
   final int productId;
 
+
   const ProductPage({Key? key, required this.email,required this.productId}) : super(key: key);
 
   @override
@@ -48,11 +49,12 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     _fetchUserProfile();
+    sendcontentbased();
   }
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -69,6 +71,20 @@ class _ProductPageState extends State<ProductPage> {
       print('Error fetching user profile: $e');
     }
   }
+  Future<void> sendcontentbased() async {
+    String baseUrl = "http://192.168.1.15:9000";
+    String url = '$baseUrl/${widget.email}/${widget.productId}/';
+
+    try {
+      // Send the HTTP request - no need to await a response if none is expected
+      http.get(Uri.parse(url));
+      // Optionally, handle the response if needed or log that the request was sent
+    } catch (e) {
+      print('Error sending request: $e');
+      // Handle any errors here
+    }
+  }
+
 
 
   final apiService = ApiService();
@@ -605,7 +621,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.72:9000/alternatives/food/$productId/'));
+          'http://192.168.1.15:9000/alternatives/food/$productId/'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
