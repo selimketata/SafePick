@@ -44,14 +44,47 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   late String username = "";
   late String photo = "";
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _fetchUserProfile();
     sendcontentbased();
-
+    _checkFavoriteStatus();
   }
+  Future<void> _checkFavoriteStatus() async {
+    // Construct the URL to check the favorite status
+    String checkUrl = 'http://192.168.1.15:9000/favorites/check/${widget.email}/${widget.productId}/';
+    try {
+      var response = await http.get(Uri.parse(checkUrl));
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        print('Response body: ${response.body}');
+        print(widget.productId);
+        print(widget.email);
+        var data = json.decode(response.body);
+
+        // Check the "is_favorite" field in the parsed JSON
+        if (data["is_favorite"] == true) {
+          setState(() {
+            isFavorite = true;
+            print("is favorite");
+          });
+        } else {
+          setState(() {
+            isFavorite = false;
+            print("is not favorite");
+          });
+        }
+      } else {
+        print('Failed to fetch favorite status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error checking favorite status: $e');
+    }
+  }
+
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
@@ -120,21 +153,19 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           actions: [
-            Container(
-              width: 47,
-              height: 47,
-              decoration: BoxDecoration(
-                color: Color(0xFFECBE5C),
-                shape: BoxShape.circle,
-              ),
-              margin: EdgeInsets.only(right: 10),
-              child: IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white),
-                onPressed: () {
-                  // Add your favorite functionality here
-                },
-              ),
-            ),
+          Container(
+          width: 47,
+          height: 47,
+          decoration: BoxDecoration(
+            color: Color(0xFFECBE5C),
+            shape: BoxShape.circle,
+          ),
+          margin: EdgeInsets.only(right: 10),
+          child: IconButton(
+            icon: Icon(Icons.favorite, color: isFavorite ? Colors.red : Colors.white),
+            onPressed: toggleFavorite,
+          ),
+        ),
           ],
         ),
       ),
@@ -543,6 +574,30 @@ class _ProductPageState extends State<ProductPage> {
           ],
       ),
     );
+  }
+
+
+  void toggleFavorite() async {
+    // Toggle the state of favorite
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    // Send the HTTP request
+    String url = 'http://192.168.1.15:9000/favorites/${widget.email}/${widget.productId}/';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // Handle the response if needed
+      print('Favorite updated successfully');
+    } else {
+      // If the server did not return a 200 OK response,
+      // then handle the error or revert the favorite status
+      print('Failed to update favorite');
+      setState(() {
+        isFavorite = !isFavorite; // Revert the favorite status if the request failed
+      });
+    }
   }
 }
 

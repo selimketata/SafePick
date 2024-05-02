@@ -1084,7 +1084,7 @@ def food_Alternatives(request, product_code):
                 products_with_same_category = [product for product in products_with_same_category if product.get('nutriscore_score_out_of_100', 0) >= current_product_score]
                 # Sort the products by nutriscore_score_out_of_100
                 sorted_products = sorted(products_with_same_category, key=lambda x: x.get('nutriscore_score_out_of_100', 0), reverse=True)
-                
+
                 # Serialize the products
                 serialized_products = []
                 if len(sorted_products) >= 5:
@@ -1223,3 +1223,70 @@ def delete_message(request):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+def update_user_favorites(request, email, code):
+    my_client = pymongo.MongoClient(settings.DB_NAME)
+    dbname = my_client['Safepick']
+    users = dbname["SafePick_userprofile"]
+
+    try:
+        # Add the new code to the user's codes list
+        users.update_one(
+            {"email": email},
+            {"$push": {"favorites": code}}
+        )
+
+        return JsonResponse({"status": "success"}, safe=False)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+def favorites_get(request, email):
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+
+    # Find the document in the recommendations collection by email
+    favorites = db.SafePick_userprofile.find_one({"email": email})
+
+    # If no recommendations are found for the email, return an empty list
+    if not favorites:
+        return JsonResponse({'error': 'No favorites'}, status=404)
+
+    # Extract product codes
+    product_codes = favorites['favorites']
+
+    # Fetch details from the food collection for each product code
+    product_details = []
+    for code in product_codes:
+        product = db.food.find_one({"code": code}, {'product_name': 1, 'nutriscore_score_out_of_100': 1, 'background_removed_image': 1})
+        if product:
+            product_details.append({
+                'product_name': product.get('product_name', ''),
+                'nutriscore_score_out_of_100': product.get('nutriscore_score_out_of_100', -1),
+                'background_removed_image': product.get('background_removed_image', '')
+            })
+    products = [serialize_doc(product) for product in product_details]
+
+
+    # Return the product details as JSON
+    return JsonResponse({'products': products})
+
+
+def check_favorite_status(request, email, product_id):
+    if request.method == 'GET':
+        my_client = pymongo.MongoClient(settings.DB_NAME)
+        dbname = my_client['Safepick']
+        users = dbname["SafePick_userprofile"]
+
+        try:
+            # Check if the product_id is in the user's favorites list
+            product_id = int(product_id)
+            user = users.find_one({"email": email, "favorites": product_id})
+
+            if user!=None :
+                return JsonResponse({"is_favorite": True}, safe=False)
+            else:
+                return JsonResponse({"is_favorite": False}, safe=False)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
