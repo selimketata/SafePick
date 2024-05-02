@@ -18,9 +18,7 @@ class ApiService {
 
   Future<ProductC> fetchProduct(int productCode) async {
     final response = await http
-
-        .get(Uri.parse('http://192.168.1.15:9000/cosmetics/$productCode/'));
-
+        .get(Uri.parse('http://192.168.1.16:9000/cosmetics/$productCode/'));
     if (response.statusCode == 200) {
       return ProductC.fromJson(jsonDecode(response.body));
     } else {

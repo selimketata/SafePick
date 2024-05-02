@@ -3,9 +3,9 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'ProfilePage.dart';
+
 import 'dart:async'; // Added for using Future
-import 'CommunityDiscussionPage.dart';
+
 import 'scan.dart';
 
 class Community extends StatefulWidget {
@@ -41,12 +41,10 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
-
+ 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
@@ -64,9 +62,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserCommunities() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_user_communities/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_communities/'),
         body: {'email': widget.email},
       );
 
@@ -86,9 +82,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchCommunitiesNotUserExists() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_communities_not_user_exists/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_communities_not_user_exists/'),
         body: {'email': widget.email},
       );
 
@@ -109,9 +103,7 @@ class _CommunityState extends State<Community> {
   Future<void> _addEmailToCommunity(String communityName) async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/add_email_to_community/'),
-
+        Uri.parse('http://192.168.1.16:9000/add_email_to_community/'),
         body: {'community_name': communityName, 'email': widget.email},
       );
 
