@@ -573,3 +573,106 @@ def cosmetics_Alternatives(request, product_code):
                 return JsonResponse({'error': 'Product not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+        
+from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Message  # Ensure this is correctly mapped to MongoDB
+
+@api_view(['POST'])
+def search_messages_in_community(request):
+    community_name = request.data.get('community_name')
+    search_term = request.data.get('search_term')
+
+    if not community_name or not search_term:
+        return Response({"error": "Both community name and search term are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Assuming using Djongo to query MongoDB
+        messages = Message.objects.filter(
+            community_name=community_name,
+            content__icontains=search_term
+        ).order_by('-timestamp')
+
+        if not messages:
+            return Response({"error": "No messages found"}, status=status.HTTP_404_NOT_FOUND)
+
+        messages_data = [{
+          
+            "email": message.email,
+            "content": message.content,
+            "timestamp": message.timestamp.isoformat()
+        } for message in messages]
+
+        return Response({
+           
+            "messages": messages_data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['PATCH'])
+def update_user_name(request):
+    if request.method == 'PATCH':
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_profile = get_object_or_404(UserProfile, email=email)
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+from django.contrib.auth.hashers import make_password 
+@api_view(['PATCH'])
+def update_user_password(request):
+    if request.method == 'PATCH':
+        email = request.data.get('email')
+        new_password = request.data.get('new_password')
+
+        if not email or not new_password:
+            return Response({'error': 'Email and new password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Fetching the user profile
+        user_profile = get_object_or_404(UserProfile, email=email)
+
+        # Hashing the new password before saving it
+        user_profile.password = make_password(new_password)
+
+        # Creating a serializer instance with the updated user data
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            # Saving the new password to the database
+            serializer.save()
+            return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import UserProfile, Message,CommunityMember
+
+@api_view(['DELETE'])
+def delete_user_profile(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Fetching the user profile
+    user_profile = get_object_or_404(UserProfile, email=email)
+
+    # Delete user messages
+    Message.objects.filter(email=email).delete()
+
+    # Delete community memberships
+    CommunityMember.objects.filter(email=email).delete()
+
+    # Delete the user profile
+    user_profile.delete()
+
+    return Response({'message': 'User account and related data successfully deleted'}, status=status.HTTP_200_OK)

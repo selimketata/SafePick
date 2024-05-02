@@ -58,7 +58,7 @@ class _SecondPageState extends State<SecondPage> {
   Future<void> _fetchUserPhoto() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 

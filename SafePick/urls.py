@@ -28,6 +28,9 @@ path('create_message/', views.create_message, name='create_message'),
  path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
  path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
 path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
-
+path('search_messages_in_community/', views.search_messages_in_community, name='search_messages_in_community'),
+path('update_user_name/', views.update_user_name, name='update_user_name'),
+path('update_user_password/', views.update_user_password, name='update_user_password'),
+path('delete_user_profile/', views.delete_user_profile, name='delete_user_profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

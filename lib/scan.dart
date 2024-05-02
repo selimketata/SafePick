@@ -6,14 +6,12 @@ import 'dart:convert';
 
 class ScanApp extends StatefulWidget {
   final String email;
-  
 
   const ScanApp({Key? key, required this.email}) : super(key: key);
-   
+
   @override
   _ScanAppState createState() => _ScanAppState();
 }
-
 
 class _ScanAppState extends State<ScanApp> {
   late String username = "";
@@ -28,7 +26,7 @@ class _ScanAppState extends State<ScanApp> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.67:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -46,7 +44,6 @@ class _ScanAppState extends State<ScanApp> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     Future<void> scan() async {
@@ -57,12 +54,12 @@ class _ScanAppState extends State<ScanApp> {
         ScanMode.BARCODE,
       );
 
-
       // Navigate to the ProductPage with the scanned productId
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductPageforScan(email:widget.email,productId:  26400163909),
+          builder: (context) =>
+              ProductPageforScan(email: widget.email, productId: 26400163909),
         ),
       );
     }
