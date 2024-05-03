@@ -35,7 +35,8 @@ class ProductPage extends StatefulWidget {
   final String email;
   final int productId;
 
-  const ProductPage({super.key, required this.email, required this.productId});
+  const ProductPage({Key? key, required this.email, required this.productId})
+      : super(key: key);
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -44,17 +45,53 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   late String username = "";
   late String photo = "";
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _fetchUserProfile();
+    sendcontentbased();
+    _checkFavoriteStatus();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    // Construct the URL to check the favorite status
+    String checkUrl =
+        'http://192.168.1.15:9000/favorites/check/${widget.email}/${widget.productId}/';
+    try {
+      var response = await http.get(Uri.parse(checkUrl));
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        print('Response body: ${response.body}');
+        print(widget.productId);
+        print(widget.email);
+        var data = json.decode(response.body);
+
+        // Check the "is_favorite" field in the parsed JSON
+        if (data["is_favorite"] == true) {
+          setState(() {
+            isFavorite = true;
+            print("is favorite");
+          });
+        } else {
+          setState(() {
+            isFavorite = false;
+            print("is not favorite");
+          });
+        }
+      } else {
+        print('Failed to fetch favorite status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error checking favorite status: $e');
+    }
   }
 
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.14:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -72,28 +109,42 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
+  Future<void> sendcontentbased() async {
+    String baseUrl = "http://192.168.1.15:9000";
+    String url = '$baseUrl/${widget.email}/${widget.productId}/';
+
+    try {
+      // Send the HTTP request - no need to await a response if none is expected
+      http.get(Uri.parse(url));
+      // Optionally, handle the response if needed or log that the request was sent
+    } catch (e) {
+      print('Error sending request: $e');
+      // Handle any errors here
+    }
+  }
+
   final apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffFDF6EC),
+      backgroundColor: Color(0xffFDF6EC),
       appBar: PreferredSize(
         preferredSize:
-            const Size.fromHeight(47), // Adjust the preferred height as needed
+            Size.fromHeight(47), // Adjust the preferred height as needed
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(
             width: 47,
             height: 47,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Color(0xFFECBE5C),
               shape: BoxShape.circle,
             ),
-            margin: const EdgeInsets.only(left: 10),
+            margin: EdgeInsets.only(left: 10),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -103,16 +154,15 @@ class _ProductPageState extends State<ProductPage> {
             Container(
               width: 47,
               height: 47,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Color(0xFFECBE5C),
                 shape: BoxShape.circle,
               ),
-              margin: const EdgeInsets.only(right: 10),
+              margin: EdgeInsets.only(right: 10),
               child: IconButton(
-                icon: const Icon(Icons.favorite, color: Colors.white),
-                onPressed: () {
-                  // Add your favorite functionality here
-                },
+                icon: Icon(Icons.favorite,
+                    color: isFavorite ? Colors.red : Colors.white),
+                onPressed: toggleFavorite,
               ),
             ),
           ],
@@ -129,7 +179,7 @@ class _ProductPageState extends State<ProductPage> {
                   future: apiService.fetchProduct(widget.productId),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
+                      return Center(
                         child:
                             CircularProgressIndicator(color: Color(0xffECBE5C)),
                       );
@@ -149,35 +199,35 @@ class _ProductPageState extends State<ProductPage> {
                               Row(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 30, top: 20),
+                                    padding: EdgeInsets.only(left: 30, top: 20),
                                     child: Container(
                                       width: 20,
                                       height: 20,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xffECBE5C),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 0, top: 0),
+                                    padding: EdgeInsets.only(left: 0, top: 0),
                                     child: Container(
                                       width: 40,
                                       height: 40,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xff5CB287),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(
+                                    padding: EdgeInsets.only(
                                         left: 190,
                                         top: 40), // Adjusted for simplicity
                                     child: Container(
                                       width: 50,
                                       height: 50,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xffECBE5C),
                                       ),
@@ -189,13 +239,13 @@ class _ProductPageState extends State<ProductPage> {
                               Positioned.fill(
                                 child: Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                         horizontal:
                                             50), // Increase padding to ensure text does not overlap with the circles too much
                                     child: Text(
                                       product.productName ?? 'No Name',
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Harmonia Sans W01 Regular',
@@ -211,9 +261,9 @@ class _ProductPageState extends State<ProductPage> {
                             ],
                           ),
 
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Center(
-                              child: SizedBox(
+                              child: Container(
                             height: 240,
                             width: 240,
                             child: CircularPercentIndicator(
@@ -229,12 +279,12 @@ class _ProductPageState extends State<ProductPage> {
                                 height: 160,
                                 width: 160,
                               ),
-                              backgroundColor: const Color(0xffD70404),
-                              progressColor: const Color(0xff5CB287),
+                              backgroundColor: Color(0xffD70404),
+                              progressColor: Color(0xff5CB287),
                               circularStrokeCap: CircularStrokeCap.round,
                             ),
                           )),
-                          const SizedBox(
+                          SizedBox(
                             height: 10,
                           ), // Add some space between the circular indicator and the percentage
                           Row(
@@ -242,19 +292,19 @@ class _ProductPageState extends State<ProductPage> {
                             children: [
                               Text(
                                 '${product.nutriscoreScoreOutOf100 ?? 0}%', // Display the percentage
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 32,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(
+                              SizedBox(
                                   width:
                                       10), // Add some space between the percentage and the image
                               Container(
                                 width: 38,
                                 height: 38,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image: AssetImage(
@@ -265,12 +315,12 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // 'Ingredients' text on the left
-                              const Text(
+                              Text(
                                 'Nutritients:',
                                 style: TextStyle(
                                   fontSize: 23,
@@ -278,7 +328,7 @@ class _ProductPageState extends State<ProductPage> {
                                   fontFamily: 'SF Pro Text',
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               // Add space between 'Ingredients' and 'Details'
                               // Container for 'Details' on the right
                               GestureDetector(
@@ -288,7 +338,7 @@ class _ProductPageState extends State<ProductPage> {
                                   width: 100, // Adjust width as needed
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: const Color(
+                                      color: Color(
                                           0xffECBE5C), // Specify border color
                                       width: 3, // Adjust border width as needed
                                     ),
@@ -296,7 +346,7 @@ class _ProductPageState extends State<ProductPage> {
                                         15), // Add border radius for rounded corners
                                   ),
 
-                                  child: const Stack(
+                                  child: Stack(
                                     children: [
                                       Align(
                                         alignment: Alignment.center,
@@ -321,16 +371,16 @@ class _ProductPageState extends State<ProductPage> {
                           ).animate().fade(duration: 550.ms).slideY(),
                           // for (int i = 0; i < 20; i++)
                           //   Text('Scrolling Test Text ${i + 1}', style: TextStyle(fontSize: 22)),
-                          const SizedBox(
+                          SizedBox(
                             height: 10,
                           ),
                           Column(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(5),
+                                padding: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: const Color(0xffD9D9D9).withOpacity(0.5),
+                                  color: Color(0xffD9D9D9).withOpacity(0.5),
                                 ),
                                 child: Row(
                                   children: [
@@ -338,7 +388,7 @@ class _ProductPageState extends State<ProductPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Padding(
+                                        Padding(
                                           padding: EdgeInsets.only(left: 6),
                                           child: Text(
                                             'energyKcal',
@@ -351,24 +401,24 @@ class _ProductPageState extends State<ProductPage> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 6),
+                                          padding: EdgeInsets.only(left: 6),
                                           child: Row(
                                             children: [
                                               Container(
                                                 width: 7,
                                                 height: 7,
-                                                decoration: const BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   color: Color(
                                                       0xffF1755B), // Adjust color as needed
                                                 ),
                                               ),
-                                              const SizedBox(
+                                              SizedBox(
                                                   width:
                                                       4), // Adjust spacing as needed
                                               Text(
                                                 'Value: ${product.energyKcal100g}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.black87,
                                                 ),
@@ -378,20 +428,20 @@ class _ProductPageState extends State<ProductPage> {
                                         )
                                       ],
                                     ),
-                                    const Spacer(),
+                                    Spacer(),
 
                                     Padding(
-                                      padding: const EdgeInsets.all(15),
+                                      padding: EdgeInsets.all(15),
                                       child: GestureDetector(
                                         onTap: () {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              return const Details1(); // Show ProductDetailsDialog as a dialog
+                                              return Details1(); // Show ProductDetailsDialog as a dialog
                                             },
                                           );
                                         },
-                                        child: const Icon(Icons.info,
+                                        child: Icon(Icons.info,
                                             color: Colors.grey),
                                       ),
                                     ),
@@ -401,22 +451,22 @@ class _ProductPageState extends State<ProductPage> {
                               ).animate().fade(duration: 550.ms).slideY(),
                             ],
                           ),
-                          const SizedBox(
+                          SizedBox(
                               height: 10), // Add space between the containers
 
                           // Second Container (Copy and paste the first Container code here)
                           Container(
-                            padding: const EdgeInsets.all(5),
+                            padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: const Color(0xffD9D9D9).withOpacity(0.5),
+                              color: Color(0xffD9D9D9).withOpacity(0.5),
                             ),
                             child: Row(
                               children: <Widget>[
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    const Padding(
+                                    Padding(
                                       padding: EdgeInsets.only(left: 6),
                                       child: Text(
                                         'Fibers',
@@ -429,24 +479,24 @@ class _ProductPageState extends State<ProductPage> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 6),
+                                      padding: EdgeInsets.only(left: 6),
                                       child: Row(
                                         children: [
                                           Container(
                                             width: 7,
                                             height: 7,
-                                            decoration: const BoxDecoration(
+                                            decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color(
                                                   0xff5CB287), // Adjust color as needed
                                             ),
                                           ),
-                                          const SizedBox(
+                                          SizedBox(
                                               width:
                                                   4), // Adjust spacing as needed
                                           Text(
                                             'Value: ${product.fiber100g}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.black87,
                                             ),
@@ -456,40 +506,40 @@ class _ProductPageState extends State<ProductPage> {
                                     )
                                   ],
                                 ),
-                                const Spacer(),
+                                Spacer(),
                                 Padding(
-                                  padding: const EdgeInsets.all(15),
+                                  padding: EdgeInsets.all(15),
                                   child: GestureDetector(
                                     onTap: () {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return const Details2(); // Show ProductDetailsDialog as a dialog
+                                          return Details2(); // Show ProductDetailsDialog as a dialog
                                         },
                                       );
                                     },
-                                    child: const Icon(Icons.info, color: Colors.grey),
+                                    child: Icon(Icons.info, color: Colors.grey),
                                   ),
                                 ),
                               ],
                             ),
                           ).animate().fade(duration: 550.ms).slideY(),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 80.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: ExpansionTile(
                                 tilePadding:
-                                    const EdgeInsets.only(left: 10, right: 17),
+                                    EdgeInsets.only(left: 10, right: 17),
                                 expandedCrossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 collapsedTextColor: Colors.black,
                                 collapsedBackgroundColor:
-                                    const Color(0xffD9D9D9).withOpacity(0.5),
+                                    Color(0xffD9D9D9).withOpacity(0.5),
                                 backgroundColor:
-                                    const Color(0xffD9D9D9).withOpacity(0.5),
-                                title: const Column(
+                                    Color(0xffD9D9D9).withOpacity(0.5),
+                                title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -520,18 +570,45 @@ class _ProductPageState extends State<ProductPage> {
                         ],
                       );
                     } else {
-                      return const Text("No product data available");
+                      return Text("No product data available");
                     }
                   },
                 ),
               ),
             ),
           ),
-          const MyDraggableSheet(
-              child: Alternative()), // Ajouter ici le widget Alternative
+          MyDraggableSheet(
+              child: Alternative(
+                  productId:
+                      widget.productId)), // Ajouter ici le widget Alternative
         ],
       ),
     );
+  }
+
+  void toggleFavorite() async {
+    // Toggle the state of favorite
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    // Send the HTTP request
+    String url =
+        'http://192.168.1.15:9000/favorites/${widget.email}/${widget.productId}/';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // Handle the response if needed
+      print('Favorite updated successfully');
+    } else {
+      // If the server did not return a 200 OK response,
+      // then handle the error or revert the favorite status
+      print('Failed to update favorite');
+      setState(() {
+        isFavorite =
+            !isFavorite; // Revert the favorite status if the request failed
+      });
+    }
   }
 }
 
@@ -542,10 +619,10 @@ Widget buildInfoRow(String title, dynamic value) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 10),
+            padding: EdgeInsets.only(left: 10),
             child: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -554,12 +631,12 @@ Widget buildInfoRow(String title, dynamic value) {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 10),
+            padding: EdgeInsets.only(left: 10),
             child: Row(
               children: [
                 Text(
                   'Value: $value',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     color: Colors.black87,
                   ),
@@ -574,7 +651,8 @@ Widget buildInfoRow(String title, dynamic value) {
 }
 
 class Alternative extends StatelessWidget {
-  const Alternative({super.key});
+  final int productId;
+  const Alternative({Key? key, required this.productId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -582,13 +660,13 @@ class Alternative extends StatelessWidget {
       future: fetchData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final List<Map<String, dynamic>> products = snapshot.data!;
           if (products.isEmpty) {
-            return const Center(child: Text('No products found'));
+            return Center(child: Text('No products found'));
           }
           return Center(
             child: Column(
@@ -611,7 +689,8 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(
-          Uri.parse('http://192.168.1.16:9000/alternatives/food/26400163909/'));
+          Uri.parse('http://192.168.1.15:9000/alternatives/food/$productId/'));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
         return data
@@ -636,20 +715,20 @@ class BottomSheetDummyUI extends StatelessWidget {
     required this.content,
     required this.img,
     required this.score, // Add the 'score' parameter here
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -660,49 +739,48 @@ class BottomSheetDummyUI extends StatelessWidget {
                         base64Decode(img),
                         width: 100,
                         height: 100,
-                        fit: BoxFit.cover,
                       )
                     : Container(), // Display an empty container if image data is empty
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5),
                     Text(
                       content,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    const SizedBox(height: 15), // Vertical space after content text
+                    SizedBox(height: 15), // Vertical space after content text
                     Row(
                       children: [
-                        const SizedBox(
+                        SizedBox(
                             width:
                                 20), // Horizontal space before score and icon row
-                        const Icon(Icons.check,
+                        Icon(Icons.check,
                             color: Colors.green), // Green check icon
-                        const SizedBox(
+                        SizedBox(
                             width:
                                 5), // Horizontal space between icon and score
                         Text(
                           score
                               .toString(), // Convert score to string before displaying
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                           ),
                         ),
-                        const SizedBox(
+                        SizedBox(
                             width:
                                 10), // Horizontal space between score and next item
                         // Add here other items next to the score if needed
                       ],
                     ),
-                    const SizedBox(height: 50),
+                    SizedBox(height: 50),
                   ],
                 ),
               )
@@ -716,7 +794,7 @@ class BottomSheetDummyUI extends StatelessWidget {
 
 class MyDraggableSheet extends StatefulWidget {
   final Widget child;
-  const MyDraggableSheet({super.key, required this.child});
+  const MyDraggableSheet({Key? key, required this.child}) : super(key: key);
 
   @override
   State<MyDraggableSheet> createState() => _MyDraggableSheetState();

@@ -34,6 +34,13 @@ path('search_messages_in_community/', views.search_messages_in_community, name='
 path('update_user_name/', views.update_user_name, name='update_user_name'),
 path('update_user_password/', views.update_user_password, name='update_user_password'),
 path('delete_user_profile/', views.delete_user_profile, name='delete_user_profile'),
+path('favorites/<str:email>/<int:code>/', views.update_user_favorites, name='update_user_favorites'),
+path('<str:email>/favorites/', views.favorites_get, name='favorites_get'),
+path('favorites/check/<str:email>/<str:product_id>/', views.check_favorite_status, name='check_favorite_status'),
+
+
+
+
 
     path('add_community/', views.add_community, name='add_community'),
     path('add_email_to_community/', views.add_email_to_community, name='add_email_to_community'),
