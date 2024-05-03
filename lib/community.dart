@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
+import 'package:flutter_application_2/chatbot.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -11,7 +12,7 @@ import 'scan.dart';
 class Community extends StatefulWidget {
   final String email;
 
-  const Community({Key? key, required this.email}) : super(key: key);
+  const Community({super.key, required this.email});
 
   @override
   _CommunityState createState() => _CommunityState();
@@ -128,15 +129,15 @@ class _CommunityState extends State<Community> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xFFFDF6EC),
+        color: const Color(0xFFFDF6EC),
         child: Stack(
           children: [
             Container(
-              color: Color(0xFFFDF6EC),
-              child: Align(
+              color: const Color(0xFFFDF6EC),
+              child: const Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 16.0),
+                  padding: EdgeInsets.only(top: 100, left: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -173,7 +174,7 @@ class _CommunityState extends State<Community> {
                 children: [
                   buildSectionTitle('Socials'),
                   buildScrollableItemList(userCommunities, false),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildSectionTitle('Discover More'),
                   buildScrollableItemList(discoverMoreItems, true),
                 ],
@@ -197,17 +198,25 @@ class _CommunityState extends State<Community> {
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color(0xFFFDF6EC),
-        color: Color(0xFFECBE5C).withOpacity(0.9),
-        animationDuration: Duration(milliseconds: 250),
+        backgroundColor: const Color(0xFFFDF6EC),
+        color: const Color(0xFFECBE5C).withOpacity(0.9),
+        animationDuration: const Duration(milliseconds: 250),
         index: 3, // Set the index to the current page
         items: [
-          Container(
+           GestureDetector(
+             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Chatbot()),
+              );
+            },
+         child :  SizedBox(
             width: 30,
             height: 30,
             child: Image.asset('assets/images/robot.png'),
-          ),
-          Icon(Icons.favorite),
+          ),),
+          const Icon(Icons.favorite),
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -216,13 +225,13 @@ class _CommunityState extends State<Community> {
                     builder: (context) => ScanApp(email: widget.email)),
               );
             },
-            child: Container(
+            child: SizedBox(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/code-barres-lu.png'),
             ),
           ),
-          Icon(Icons.home),
+          const Icon(Icons.home),
           GestureDetector(
             onTap: () {
               Navigator.pushReplacement(
@@ -232,7 +241,7 @@ class _CommunityState extends State<Community> {
                 ),
               );
             },
-            child: Container(
+            child: SizedBox(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/amis.png'),
@@ -252,7 +261,7 @@ class _CommunityState extends State<Community> {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -261,7 +270,7 @@ class _CommunityState extends State<Community> {
             ),
           ],
         ),
-        Divider(
+        const Divider(
           color: Color(0xFF5CB287), // Adjust color as needed
           thickness: 2, // Adjust thickness as needed
         ),
@@ -270,19 +279,19 @@ class _CommunityState extends State<Community> {
   }
 
   Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
-    return Container(
+    return SizedBox(
       height: 240, // Limit the height to show only up to 4 items
       child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: items.map((item) {
             return Container(
               height: 55,
               width: 380,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              margin: EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 0.35),
+                color: const Color.fromRGBO(217, 217, 217, 0.35),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -290,7 +299,7 @@ class _CommunityState extends State<Community> {
                 children: [
                   Text(
                     item,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,

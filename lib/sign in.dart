@@ -7,6 +7,8 @@ import 'sign up.dart';
 import 'Home_page.dart';
 
 class SignIn extends StatefulWidget {
+  const SignIn({super.key});
+
   @override
   _SignInState createState() => _SignInState();
 }
@@ -55,14 +57,14 @@ class _SignInState extends State<SignIn> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text(message),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -75,15 +77,15 @@ class _SignInState extends State<SignIn> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Color(0xFFFDF6EC),
+        backgroundColor: const Color(0xFFFDF6EC),
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Stack(
             children: [
               Positioned(
                 top: 0,
                 left: 0,
-                child: Container(
+                child: SizedBox(
                   width: screenWidth,
                   height: screenWidth / 3.4,
                   child: Image.asset(
@@ -96,7 +98,7 @@ class _SignInState extends State<SignIn> {
                 top: screenWidth / 3.4 + 29,
                 left: 0,
                 right: 0,
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
@@ -110,7 +112,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                      padding: EdgeInsets.only(left: 20.0),
                       child: Text(
                         'Sign in',
                         style: TextStyle(
@@ -121,7 +123,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: 15),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                      padding: EdgeInsets.only(left: 20.0),
                       child: Text(
                         'Please fill the credentials',
                         style: TextStyle(
@@ -152,17 +154,17 @@ class _SignInState extends State<SignIn> {
                         ),
                         child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 20.0),
                               child: Icon(
                                 Icons.alternate_email_sharp,
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: TextField(
                                 controller: _emailController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Enter your email',
                                   border: InputBorder.none,
                                   contentPadding:
@@ -174,7 +176,7 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
@@ -187,18 +189,18 @@ class _SignInState extends State<SignIn> {
                         ),
                         child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 20.0),
                               child: Icon(
                                 Icons.lock,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: TextField(
                                 controller: _passwordController,
                                 obscureText: true,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Enter password',
                                   border: InputBorder.none,
                                   contentPadding:
@@ -210,7 +212,7 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal:
@@ -221,10 +223,10 @@ class _SignInState extends State<SignIn> {
                         child: ElevatedButton(
                           onPressed: _signIn,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF5CB287),
-                            shape: RoundedRectangleBorder(),
+                            backgroundColor: const Color(0xFF5CB287),
+                            shape: const RoundedRectangleBorder(),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Sign In',
                             style: TextStyle(
                               fontSize: 30,
@@ -235,14 +237,14 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             "Don't have an account? ",
                             style: TextStyle(
                               fontSize: 19,
@@ -254,10 +256,10 @@ class _SignInState extends State<SignIn> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Signup()),
+                                    builder: (context) => const Signup()),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Sign Up',
                               style: TextStyle(
                                 fontSize: 20,

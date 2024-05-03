@@ -35,8 +35,7 @@ class ProductPage extends StatefulWidget {
   final String email;
   final int productId;
 
-  const ProductPage({Key? key, required this.email, required this.productId})
-      : super(key: key);
+  const ProductPage({super.key, required this.email, required this.productId});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -78,23 +77,23 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFDF6EC),
+      backgroundColor: const Color(0xffFDF6EC),
       appBar: PreferredSize(
         preferredSize:
-            Size.fromHeight(47), // Adjust the preferred height as needed
+            const Size.fromHeight(47), // Adjust the preferred height as needed
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(
             width: 47,
             height: 47,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFFECBE5C),
               shape: BoxShape.circle,
             ),
-            margin: EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -104,13 +103,13 @@ class _ProductPageState extends State<ProductPage> {
             Container(
               width: 47,
               height: 47,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFFECBE5C),
                 shape: BoxShape.circle,
               ),
-              margin: EdgeInsets.only(right: 10),
+              margin: const EdgeInsets.only(right: 10),
               child: IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white),
+                icon: const Icon(Icons.favorite, color: Colors.white),
                 onPressed: () {
                   // Add your favorite functionality here
                 },
@@ -130,7 +129,7 @@ class _ProductPageState extends State<ProductPage> {
                   future: apiService.fetchProduct(widget.productId),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child:
                             CircularProgressIndicator(color: Color(0xffECBE5C)),
                       );
@@ -150,35 +149,35 @@ class _ProductPageState extends State<ProductPage> {
                               Row(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(left: 30, top: 20),
+                                    padding: const EdgeInsets.only(left: 30, top: 20),
                                     child: Container(
                                       width: 20,
                                       height: 20,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xffECBE5C),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 0, top: 0),
+                                    padding: const EdgeInsets.only(left: 0, top: 0),
                                     child: Container(
                                       width: 40,
                                       height: 40,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xff5CB287),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                         left: 190,
                                         top: 40), // Adjusted for simplicity
                                     child: Container(
                                       width: 50,
                                       height: 50,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Color(0xffECBE5C),
                                       ),
@@ -190,13 +189,13 @@ class _ProductPageState extends State<ProductPage> {
                               Positioned.fill(
                                 child: Center(
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal:
                                             50), // Increase padding to ensure text does not overlap with the circles too much
                                     child: Text(
                                       product.productName ?? 'No Name',
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Harmonia Sans W01 Regular',
@@ -212,9 +211,9 @@ class _ProductPageState extends State<ProductPage> {
                             ],
                           ),
 
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Center(
-                              child: Container(
+                              child: SizedBox(
                             height: 240,
                             width: 240,
                             child: CircularPercentIndicator(
@@ -230,12 +229,12 @@ class _ProductPageState extends State<ProductPage> {
                                 height: 160,
                                 width: 160,
                               ),
-                              backgroundColor: Color(0xffD70404),
-                              progressColor: Color(0xff5CB287),
+                              backgroundColor: const Color(0xffD70404),
+                              progressColor: const Color(0xff5CB287),
                               circularStrokeCap: CircularStrokeCap.round,
                             ),
                           )),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ), // Add some space between the circular indicator and the percentage
                           Row(
@@ -243,19 +242,19 @@ class _ProductPageState extends State<ProductPage> {
                             children: [
                               Text(
                                 '${product.nutriscoreScoreOutOf100 ?? 0}%', // Display the percentage
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 32,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                   width:
                                       10), // Add some space between the percentage and the image
                               Container(
                                 width: 38,
                                 height: 38,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image: AssetImage(
@@ -266,12 +265,12 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // 'Ingredients' text on the left
-                              Text(
+                              const Text(
                                 'Nutritients:',
                                 style: TextStyle(
                                   fontSize: 23,
@@ -279,7 +278,7 @@ class _ProductPageState extends State<ProductPage> {
                                   fontFamily: 'SF Pro Text',
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               // Add space between 'Ingredients' and 'Details'
                               // Container for 'Details' on the right
                               GestureDetector(
@@ -289,7 +288,7 @@ class _ProductPageState extends State<ProductPage> {
                                   width: 100, // Adjust width as needed
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Color(
+                                      color: const Color(
                                           0xffECBE5C), // Specify border color
                                       width: 3, // Adjust border width as needed
                                     ),
@@ -297,7 +296,7 @@ class _ProductPageState extends State<ProductPage> {
                                         15), // Add border radius for rounded corners
                                   ),
 
-                                  child: Stack(
+                                  child: const Stack(
                                     children: [
                                       Align(
                                         alignment: Alignment.center,
@@ -322,16 +321,16 @@ class _ProductPageState extends State<ProductPage> {
                           ).animate().fade(duration: 550.ms).slideY(),
                           // for (int i = 0; i < 20; i++)
                           //   Text('Scrolling Test Text ${i + 1}', style: TextStyle(fontSize: 22)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Column(
                             children: [
                               Container(
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: Color(0xffD9D9D9).withOpacity(0.5),
+                                  color: const Color(0xffD9D9D9).withOpacity(0.5),
                                 ),
                                 child: Row(
                                   children: [
@@ -339,7 +338,7 @@ class _ProductPageState extends State<ProductPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
+                                        const Padding(
                                           padding: EdgeInsets.only(left: 6),
                                           child: Text(
                                             'energyKcal',
@@ -352,24 +351,24 @@ class _ProductPageState extends State<ProductPage> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: EdgeInsets.only(left: 6),
+                                          padding: const EdgeInsets.only(left: 6),
                                           child: Row(
                                             children: [
                                               Container(
                                                 width: 7,
                                                 height: 7,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   color: Color(
                                                       0xffF1755B), // Adjust color as needed
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                   width:
                                                       4), // Adjust spacing as needed
                                               Text(
                                                 'Value: ${product.energyKcal100g}',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.black87,
                                                 ),
@@ -379,20 +378,20 @@ class _ProductPageState extends State<ProductPage> {
                                         )
                                       ],
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
 
                                     Padding(
-                                      padding: EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(15),
                                       child: GestureDetector(
                                         onTap: () {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              return Details1(); // Show ProductDetailsDialog as a dialog
+                                              return const Details1(); // Show ProductDetailsDialog as a dialog
                                             },
                                           );
                                         },
-                                        child: Icon(Icons.info,
+                                        child: const Icon(Icons.info,
                                             color: Colors.grey),
                                       ),
                                     ),
@@ -402,22 +401,22 @@ class _ProductPageState extends State<ProductPage> {
                               ).animate().fade(duration: 550.ms).slideY(),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                               height: 10), // Add space between the containers
 
                           // Second Container (Copy and paste the first Container code here)
                           Container(
-                            padding: EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: Color(0xffD9D9D9).withOpacity(0.5),
+                              color: const Color(0xffD9D9D9).withOpacity(0.5),
                             ),
                             child: Row(
                               children: <Widget>[
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Padding(
+                                    const Padding(
                                       padding: EdgeInsets.only(left: 6),
                                       child: Text(
                                         'Fibers',
@@ -430,24 +429,24 @@ class _ProductPageState extends State<ProductPage> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 6),
+                                      padding: const EdgeInsets.only(left: 6),
                                       child: Row(
                                         children: [
                                           Container(
                                             width: 7,
                                             height: 7,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color(
                                                   0xff5CB287), // Adjust color as needed
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                               width:
                                                   4), // Adjust spacing as needed
                                           Text(
                                             'Value: ${product.fiber100g}',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.black87,
                                             ),
@@ -457,40 +456,40 @@ class _ProductPageState extends State<ProductPage> {
                                     )
                                   ],
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 Padding(
-                                  padding: EdgeInsets.all(15),
+                                  padding: const EdgeInsets.all(15),
                                   child: GestureDetector(
                                     onTap: () {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return Details2(); // Show ProductDetailsDialog as a dialog
+                                          return const Details2(); // Show ProductDetailsDialog as a dialog
                                         },
                                       );
                                     },
-                                    child: Icon(Icons.info, color: Colors.grey),
+                                    child: const Icon(Icons.info, color: Colors.grey),
                                   ),
                                 ),
                               ],
                             ),
                           ).animate().fade(duration: 550.ms).slideY(),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 80.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: ExpansionTile(
                                 tilePadding:
-                                    EdgeInsets.only(left: 10, right: 17),
+                                    const EdgeInsets.only(left: 10, right: 17),
                                 expandedCrossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 collapsedTextColor: Colors.black,
                                 collapsedBackgroundColor:
-                                    Color(0xffD9D9D9).withOpacity(0.5),
+                                    const Color(0xffD9D9D9).withOpacity(0.5),
                                 backgroundColor:
-                                    Color(0xffD9D9D9).withOpacity(0.5),
-                                title: Column(
+                                    const Color(0xffD9D9D9).withOpacity(0.5),
+                                title: const Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -521,14 +520,14 @@ class _ProductPageState extends State<ProductPage> {
                         ],
                       );
                     } else {
-                      return Text("No product data available");
+                      return const Text("No product data available");
                     }
                   },
                 ),
               ),
             ),
           ),
-          MyDraggableSheet(
+          const MyDraggableSheet(
               child: Alternative()), // Ajouter ici le widget Alternative
         ],
       ),
@@ -543,10 +542,10 @@ Widget buildInfoRow(String title, dynamic value) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -555,12 +554,12 @@ Widget buildInfoRow(String title, dynamic value) {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             child: Row(
               children: [
                 Text(
                   'Value: $value',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black87,
                   ),
@@ -575,19 +574,21 @@ Widget buildInfoRow(String title, dynamic value) {
 }
 
 class Alternative extends StatelessWidget {
+  const Alternative({super.key});
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: fetchData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final List<Map<String, dynamic>> products = snapshot.data!;
           if (products.isEmpty) {
-            return Center(child: Text('No products found'));
+            return const Center(child: Text('No products found'));
           }
           return Center(
             child: Column(
@@ -635,20 +636,20 @@ class BottomSheetDummyUI extends StatelessWidget {
     required this.content,
     required this.img,
     required this.score, // Add the 'score' parameter here
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -663,45 +664,45 @@ class BottomSheetDummyUI extends StatelessWidget {
                       )
                     : Container(), // Display an empty container if image data is empty
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
                       content,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 15), // Vertical space after content text
+                    const SizedBox(height: 15), // Vertical space after content text
                     Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 20), // Horizontal space before score and icon row
-                        Icon(Icons.check,
+                        const Icon(Icons.check,
                             color: Colors.green), // Green check icon
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 5), // Horizontal space between icon and score
                         Text(
                           score
                               .toString(), // Convert score to string before displaying
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                             width:
                                 10), // Horizontal space between score and next item
                         // Add here other items next to the score if needed
                       ],
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                   ],
                 ),
               )
@@ -715,7 +716,7 @@ class BottomSheetDummyUI extends StatelessWidget {
 
 class MyDraggableSheet extends StatefulWidget {
   final Widget child;
-  const MyDraggableSheet({Key? key, required this.child}) : super(key: key);
+  const MyDraggableSheet({super.key, required this.child});
 
   @override
   State<MyDraggableSheet> createState() => _MyDraggableSheetState();

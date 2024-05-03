@@ -7,7 +7,7 @@ import 'dart:convert';
 class ScanApp extends StatefulWidget {
   final String email;
 
-  const ScanApp({Key? key, required this.email}) : super(key: key);
+  const ScanApp({super.key, required this.email});
 
   @override
   _ScanAppState createState() => _ScanAppState();

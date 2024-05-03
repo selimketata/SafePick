@@ -1,22 +1,17 @@
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:flutter_application_2/product_page_forscan.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'SearchResultsPage.dart';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
-import 'CommunityDiscussionPage.dart';
 import 'package:flutter_application_2/models/productF-.dart';
 
 class mainpagef extends StatefulWidget {
   final String email;
 
-  const mainpagef({Key? key, required this.email}) : super(key: key);
+  const mainpagef({super.key, required this.email});
 
   @override
   _mainpagefState createState() => _mainpagefState();
@@ -30,7 +25,7 @@ class _mainpagefState extends State<mainpagef> {
   List<String> productNames = [];
   List<String> productNamescb = [];
   List<Product> productscb = [];
-  List<Product> _products = [];
+  final List<Product> _products = [];
 
   final TextEditingController _controller = TextEditingController();
 
@@ -127,7 +122,7 @@ class _mainpagefState extends State<mainpagef> {
     print("Fetching products for email: $email");
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.15:9000/${email}/contentbased/'),
+        Uri.parse('http://192.168.1.15:9000/$email/contentbased/'),
       );
 
       print("HTTP Response Code: ${response.statusCode}");
@@ -158,32 +153,32 @@ class _mainpagefState extends State<mainpagef> {
     {
       'image': 'assets/images/lait.png',
       'text': 'Dairy',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     {
       'image': 'assets/images/snacks.png',
       'text': 'Snacks',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     {
       'image': 'assets/images/sauces.png',
       'text': 'Sauces',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     {
       'image': 'assets/images/sac-de-graines.png',
       'text': 'Grains',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     {
       'image': 'assets/images/proteine.png',
       'text': 'Protein',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     {
       'image': 'assets/images/fruit.png',
       'text': 'Fruits',
-      'color': Color(0xffFDF6EC),
+      'color': const Color(0xffFDF6EC),
     },
     // Add more items here
   ];
@@ -192,23 +187,23 @@ class _mainpagefState extends State<mainpagef> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFDF6EC),
+      backgroundColor: const Color(0xffFDF6EC),
       appBar: PreferredSize(
         preferredSize:
-        Size.fromHeight(47), // Adjust the preferred height as needed
+        const Size.fromHeight(47), // Adjust the preferred height as needed
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(
             width: 47,
             height: 47,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFFECBE5C),
               shape: BoxShape.circle,
             ),
-            margin: EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -216,7 +211,7 @@ class _mainpagefState extends State<mainpagef> {
           ),
           actions: [
             Container(
-              margin: EdgeInsets.only(right: 10),
+              margin: const EdgeInsets.only(right: 10),
               child: GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -226,7 +221,7 @@ class _mainpagefState extends State<mainpagef> {
                   alignment: Alignment.center,
                   children: [
                     // Placeholder or loading indicator
-                    CircularProgressIndicator(),
+                    const CircularProgressIndicator(),
                     // Replace this with your desired placeholder widget
                     // Image asset
                     Image.asset(
@@ -246,9 +241,9 @@ class _mainpagefState extends State<mainpagef> {
       ),
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 20, left: 16.0, right: 16.0),
+              padding: EdgeInsets.only(top: 20, left: 16.0, right: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -276,17 +271,17 @@ class _mainpagefState extends State<mainpagef> {
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
             sliver: SliverToBoxAdapter(
               child: TextField(
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   filled: false,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide(color: Colors.black, width: 2.0),
+                    borderSide: const BorderSide(color: Colors.black, width: 2.0),
                   ),
                 ),
                 onSubmitted: _navigateToSearchResults,
@@ -294,9 +289,9 @@ class _mainpagefState extends State<mainpagef> {
             ),
           ),
 
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+              padding: EdgeInsets.only(top: 30, left: 16, right: 16),
               child: Text(
                 'Categories',
                 style: TextStyle(
@@ -309,7 +304,7 @@ class _mainpagefState extends State<mainpagef> {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 150,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -327,7 +322,7 @@ class _mainpagefState extends State<mainpagef> {
                       margin: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: _selectedIndex == index
-                            ? Color(0xffECBE5C)
+                            ? const Color(0xffECBE5C)
                             : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
@@ -366,7 +361,7 @@ class _mainpagefState extends State<mainpagef> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
               child: Text(
@@ -381,7 +376,7 @@ class _mainpagefState extends State<mainpagef> {
             ),
           ),
           buildProductsSliver(productNames: productNamescb, products: productscb),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
               child: Text(
@@ -408,7 +403,7 @@ class _mainpagefState extends State<mainpagef> {
     required List<Product> products,
   }) {
     return SliverPadding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -434,36 +429,36 @@ class _mainpagefState extends State<mainpagef> {
                           children: <Widget>[
                             Text(
                               productNames[index], // The name of the product
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                                 color: Colors.black,
                                 fontFamily: 'SF Pro Text',
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               '${products[index].nutriScoreOutOf100}/100',
                               // The nutriScoreOutOf100 score
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                                 color: Colors.black,
                                 fontFamily: 'SF Pro Text',
                               ),
                             ),
-                            SizedBox(height: 4,),
+                            const SizedBox(height: 4,),
                             SizedBox(
                               width: 30, // Set the width of the button
                               height: 30, // Set the height of the button
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  shape: CircleBorder(),
-                                  backgroundColor: Color(0xffECBE5C),
+                                  shape: const CircleBorder(),
+                                  backgroundColor: const Color(0xffECBE5C),
                                   padding: EdgeInsets
                                       .zero, // Set padding to zero for a smaller button
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.arrow_forward_ios,
                                   size: 20, // Set a smaller icon size
                                   color: Colors.white,

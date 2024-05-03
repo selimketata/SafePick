@@ -10,17 +10,16 @@ import 'food.dart';
 
 import 'scan.dart';
 
-
 class ErrorPage extends StatelessWidget {
   final String message;
 
-  const ErrorPage({Key? key, required this.message}) : super(key: key);
+  const ErrorPage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Error'),
+        title: const Text('Error'),
       ),
       body: Center(
         child: Text(message),
@@ -29,17 +28,19 @@ class ErrorPage extends StatelessWidget {
   }
 }
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => LiquidSwipePage(),
-        '/chatbot': (context) => const chatbot(),
+        '/': (context) => const LiquidSwipePage(),
+        '/chatbot': (context) => const Chatbot(),
         '/cosmetic': (context) => const cosmetic(),
         '/scan': (context) => ScanApp(
             email: ModalRoute.of(context)!.settings.arguments as String),
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
 }
 
 class LiquidSwipePage extends StatefulWidget {
+  const LiquidSwipePage({super.key});
+
   @override
   _LiquidSwipePageState createState() => _LiquidSwipePageState();
 }
@@ -62,10 +65,10 @@ class _LiquidSwipePageState extends State<LiquidSwipePage> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      FirstPage(),
-      SeconPage(),
-      ThirdPage(),
-      SignIn(),
+      const FirstPage(),
+      const SeconPage(),
+      const ThirdPage(),
+      const SignIn(),
     ];
 
     return Scaffold(
@@ -75,7 +78,7 @@ class _LiquidSwipePageState extends State<LiquidSwipePage> {
         fullTransitionValue: 300,
         enableSideReveal: true,
         slideIconWidget: currentPage != pages.length - 1
-            ? Icon(Icons.arrow_forward_ios)
+            ? const Icon(Icons.arrow_forward_ios)
             : null,
         waveType: WaveType.liquidReveal,
         positionSlideIcon: 0.5,

@@ -9,7 +9,7 @@ import "UpdateUserpasswordPage.dart";
 class ProfilePage extends StatefulWidget {
   final String email;
 
-  const ProfilePage({Key? key, required this.email}) : super(key: key);
+  const ProfilePage({super.key, required this.email});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -43,12 +43,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (response.statusCode == 200) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => SignIn()),
+          MaterialPageRoute(builder: (context) => const SignIn()),
           (Route<dynamic> route) => false,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text('Failed to remove account. Please try again.')),
         );
       }
@@ -85,11 +85,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final Size screenSize = MediaQuery.of(context).size;
     final double circleSize =
         0.8 * screenSize.width; // Set the size of the circles
-    final double imageRadius = 180; // Set the radius of the image circle
+    const double imageRadius = 180; // Set the radius of the image circle
 
     return Scaffold(
       backgroundColor:
-          Color(0xFFFDF6EC), // Set the background color of the scaffold
+          const Color(0xFFFDF6EC), // Set the background color of the scaffold
       body: Stack(
         children: [
           Positioned(
@@ -98,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
               height: circleSize,
               width: circleSize,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color(0xFF5CB287),
               ),
@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
               height: circleSize,
               width: circleSize,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color(0xFFECBE5C),
               ),
@@ -130,29 +130,29 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(height: 100), // Adjust the height as needed
+                  const SizedBox(height: 100), // Adjust the height as needed
                   Text(
                     username, // The user's name
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 20), // Adjust the height as needed
+                  const SizedBox(height: 20), // Adjust the height as needed
                   _buildMenuItem(context, Icons.edit, 'Edit User Name',
                       screenSize.width - 90),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildMenuItem(context, Icons.lock, 'Change Password',
                       screenSize.width - 90),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildMenuItem(context, Icons.person_remove, 'Remove account',
                       screenSize.width - 90),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildMenuItem(
                       context, Icons.logout, 'Log Out', screenSize.width - 90,
                       textColor: Colors.red),
 
-                  SizedBox(height: 20), // Adjust the height as needed
+                  const SizedBox(height: 20), // Adjust the height as needed
                 ],
               ),
             ),
@@ -167,11 +167,11 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
               height: imageRadius,
               width: imageRadius,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white, // Set the color of the circle to white
               ),
-              padding: EdgeInsets.all(
+              padding: const EdgeInsets.all(
                   20), // Add padding to create space around the image
               child: ClipOval(
                 child: Image.asset(
@@ -190,12 +190,12 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Container(
               height: 50,
               width: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
               child: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -237,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       } else if (text == 'Log Out') {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => SignIn()),
+          MaterialPageRoute(builder: (context) => const SignIn()),
           (Route<dynamic> route) => false,
         );
       }
@@ -251,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       height: 59,
       width: width,
-      color: Color(0xFFD9D9D9),
+      color: const Color(0xFFD9D9D9),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -285,11 +285,11 @@ class _ProfilePageState extends State<ProfilePage> {
               content: Text(content),
               actions: <Widget>[
                 TextButton(
-                  child: Text('No'),
+                  child: const Text('No'),
                   onPressed: () => Navigator.of(context).pop(false),
                 ),
                 TextButton(
-                  child: Text('Yes', style: TextStyle(color: Colors.red)),
+                  child: const Text('Yes', style: TextStyle(color: Colors.red)),
                   onPressed: () => Navigator.of(context).pop(true),
                 ),
               ],

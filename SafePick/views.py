@@ -417,6 +417,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Message
+
 @api_view(['POST'])
 def get_messages_in_community(request):
     if request.method == 'POST':
