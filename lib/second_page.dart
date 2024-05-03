@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/MainPage_F.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'MainPage_C.dart';
 import 'ProfilePage.dart';
 import 'Community.dart';
 import 'food.dart';
@@ -49,7 +50,7 @@ class _SecondPageState extends State<SecondPage> {
           builder: (context) => mainpagef(email: widget.email))),
 
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) =>  mainpagec(email: widget.email))),
       () => Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
       () => Navigator.of(context)

@@ -120,7 +120,7 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            ProductPageC(productId: widget.productId),
+                            ProductPageC(email: widget.email,productId: widget.productId),
                       ),
                     );
                   });

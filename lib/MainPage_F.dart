@@ -13,6 +13,8 @@ import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
 import 'package:flutter_application_2/models/productF-.dart';
 
+import 'product_page.dart';
+
 class mainpagef extends StatefulWidget {
   final String email;
 
@@ -473,7 +475,7 @@ class _mainpagefState extends State<mainpagef> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          ProductPageforScan(
+                                          ProductPage(
                                               email: widget.email,
                                               productId: products[index].code),
                                     ),

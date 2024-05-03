@@ -11,11 +11,71 @@ import '../services/api_service_C.dart';
 import 'Details3.dart';
 
 
-class ProductPageC extends StatelessWidget {
+class ProductPageC extends StatefulWidget {
+  final String email;
   final int productId;
+
+
+  const ProductPageC({Key? key, required this.email,required this.productId}) : super(key: key);
+
+  @override
+  _ProductPageCState createState() => _ProductPageCState();
+}
+class _ProductPageCState extends State<ProductPageC> {
+  late String username = "";
+  late String photo = "";
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+    sendcontentbased();
+  }
+
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
+
+        body: {'email': widget.email},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        setState(() {
+          username = responseData['username'];
+          photo = responseData['photo_name'];
+        });
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
+  Future<void> sendcontentbased() async {
+    String baseUrl = "http://192.168.1.15:9000";
+    String url = '$baseUrl/${widget.email}/${widget.productId}/updatecodes/';
+
+    try {
+      // Send the HTTP request - no need to await a response if none is expected
+      http.get(Uri.parse(url));
+      // Optionally, handle the response if needed or log that the request was sent
+    } catch (e) {
+      print('Error sending request: $e');
+      // Handle any errors here
+    }
+  }
+
+
+
+
   final apiService = ApiService();
 
-  ProductPageC({required this.productId});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +128,7 @@ class ProductPageC extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: FutureBuilder<ProductC>(
-              future: apiService.fetchProduct(productId),
+              future: apiService.fetchProduct(widget.productId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -628,7 +688,7 @@ class Alternative extends StatelessWidget {
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.13:9000/alternatives/cosmetics//'));
+          'http://192.168.1.15:9000/alternatives/cosmetics//'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];

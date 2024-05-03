@@ -26,7 +26,7 @@ class _CommunityState extends State<Community> {
   List<String> socialsItems = [];
   List<String> discoverMoreItems = [];
   List<String> userCommunities = [];
-  int _activeIndex = 0;  // Default to the first tab
+  int _activeIndex = 4;  // Default to the first tab
 
   @override
   void initState() {
@@ -210,7 +210,7 @@ class _CommunityState extends State<Community> {
       ),
 
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color(0xFFFDF6EC),
+        backgroundColor: Color(0xFFFDF6EC).withOpacity(0.1),
         color: Color(0xFFECBE5C).withOpacity(0.9),
         animationDuration: Duration(milliseconds: 250),
         index: _activeIndex,
@@ -222,10 +222,14 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatbotPage()),
+                MaterialPageRoute(builder: (context) => chatbot()),
               );
             },
-            child: Icon(Icons.chat),
+            child: Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/robot.png'),
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -234,7 +238,7 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FavoritesPage(email: widget.email)),
+                MaterialPageRoute(builder: (context) => favorites(email: widget.email)),
               );
             },
             child: Icon(Icons.favorite),
@@ -246,10 +250,14 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ScanPage(email: widget.email)),
+                MaterialPageRoute(builder: (context) => ScanApp(email: widget.email)),
               );
             },
-            child: Icon(Icons.camera),
+            child: Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/code-barres-lu.png'),
+            ),
           ),
           GestureDetector(
             onTap: () {
@@ -258,7 +266,7 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(email: widget.email)),
+                MaterialPageRoute(builder: (context) =>SecondPage(email: widget.email)),
               );
             },
             child: Icon(Icons.home),
@@ -270,10 +278,14 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CommunityPage(email: widget.email)),
+                MaterialPageRoute(builder: (context) => Community(email: widget.email)),
               );
             },
-            child: Icon(Icons.group),
+            child: Container(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/amis.png'),
+            ),
           ),
         ],
       ),

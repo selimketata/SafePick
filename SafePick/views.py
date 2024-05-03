@@ -1291,10 +1291,10 @@ def check_favorite_status(request, email, product_id):
 
 from pymongo.collection import ReturnDocument
 
-def update_user_code(request, email, code):
+def update_user_code_C(request, email, code):
     my_client = pymongo.MongoClient(settings.DB_NAME)
     dbname = my_client['Safepick']
-    users = dbname["food.users"]
+    users = dbname["cosmetics.users"]
 
     try:
         # Ensure user exists or create a new one if not
@@ -1314,8 +1314,9 @@ def update_user_code(request, email, code):
         # Assign new user_id if this is a new user
         if user['user_id'] is None:
             max_user = users.find_one(sort=[("user_id", pymongo.DESCENDING)])
-            max_user_id = max_user["user_id"] if max_user else 0
+            max_user_id = max_user["user_id"] if max_user and max_user["user_id"] is not None else 0
             new_user_id = max_user_id + 1
+
             users.update_one({'email': email}, {'$set': {'user_id': new_user_id}})
 
         # Manage codes, ensuring there are no more than 6
@@ -1398,6 +1399,33 @@ def get_category_products(request, category):
     # Convert to JSON and return response
     return JsonResponse({"products": products}, safe=False)
 
+def get_products_by_category_cosmetics(request, category):
+    if request.method == 'GET':
+        client = MongoClient(settings.DB_NAME)
+        db = client['Safepick']
+        collection = db['cosmetics']  # Assuming 'cosmetics' is your collection name
+
+        # Fetch 10 products from the specified category
+        products_cursor = collection.find({'category': category}).limit(10)
+        products = list(products_cursor)  # Convert cursor to list
+
+        # Serialize each product document to be JSON-ready
+
+        products = [serialize_doc_2(product) for product in products]
+        productss = [serialize_doc(product) for product in products]
+
+    # Return JSON response
+        return JsonResponse({'products': productss}, safe=False)
+def serialize_doc_2(document):
+    """Helper function to convert MongoDB documents to JSON-serializable format"""
+    # Assuming specific fields to serialize, adjust as needed
+    return {
+        'code': document.get('code', ''),
+        'product_name': document.get('product_name', ''),
+        'background_removed_image': document.get('background_removed_image', ''),
+        'score': float(document.get('score', 0)),
+    }
+
 from django.http import JsonResponse
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -1432,6 +1460,36 @@ def content_based_recommendation(request, email):
     # Return the product details as JSON
     return JsonResponse({'products': products})
 
+def content_based_recommendation_c(request, email):
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+
+    # Find the document in the recommendations collection by email
+    recommendations = db.cosmetics_recommendations.recommendations.find_one({"email": email})
+
+    # If no recommendations are found for the email, return an empty list
+    if not recommendations:
+        return JsonResponse({'error': 'No recommendations found for this email'}, status=404)
+
+    # Extract product codes
+    product_codes = recommendations['recommended_products']
+
+    # Fetch details from the food collection for each product code
+    product_details = []
+    for code in product_codes:
+        product = db['cosmetics'].find_one({'code': int(code)}, {'product_name': 1, 'score': 1, 'background_removed_image': 1})
+        if product:
+            product_details.append({
+                'product_name': product.get('product_name', ''),
+                'score': product.get('nutriscore_score_out_of_100', -1),
+                'background_removed_image': product.get('background_removed_image', '')
+            })
+    products = [serialize_doc(product) for product in product_details]
+
+
+    # Return the product details as JSON
+    return JsonResponse({'products': products})
+
 from django.conf import settings
 from pymongo import MongoClient
 from rest_framework.views import APIView
@@ -1446,6 +1504,27 @@ def dynamic_collection_api(request):
     client = MongoClient(settings.DB_NAME)  # Make sure to use the correct settings attribute for your MongoDB URI
     db = client['Safepick']
     collection = db['food']
+
+    # Perform the query
+    if query:
+        search_results = list(collection.find({"product_name": {"$regex": query, "$options": "i"}}))
+        client.close()  # Important to close the connection
+        products = [serialize_doc(product) for product in search_results]
+
+
+        # You would still need to serialize the data here manually
+        return Response({"data": products})
+    else:
+        return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def dynamic_collection_api_c(request):
+    query = request.GET.get('q', '')
+
+    # Connect to MongoDB using settings
+    client = MongoClient(settings.DB_NAME)  # Make sure to use the correct settings attribute for your MongoDB URI
+    db = client['Safepick']
+    collection = db['cosmetics']
 
     # Perform the query
     if query:

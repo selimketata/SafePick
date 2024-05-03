@@ -4,37 +4,49 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
+import 'package:flutter_application_2/SearchResultsPageC.dart';
 import 'package:flutter_application_2/product_page_forscan.dart';
-import 'package:flutter_application_2/scan.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Community.dart';
 import 'SearchResultsPage.dart';
 import 'ProfilePage.dart';
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
-import 'package:flutter_application_2/models/productF-.dart';
+import 'package:flutter_application_2/models/productC-.dart';
 
-import 'chatbot.dart';
-import 'product_page.dart';
-import 'second_page.dart';
+import 'product_page_c.dart';
 
-class favorites extends StatefulWidget {
+class mainpagec extends StatefulWidget {
   final String email;
 
-  const favorites({Key? key, required this.email}) : super(key: key);
+  const mainpagec({Key? key, required this.email}) : super(key: key);
 
   @override
-  _favoritesState createState() => _favoritesState();
+  _mainpagecState createState() => _mainpagecState();
 }
 
-class _favoritesState extends State<favorites> {
+class _mainpagecState extends State<mainpagec> {
   late String photo = "";
   late String email = "";
+  int _selectedIndex = 0;
+  List<Product> products = [];
+  List<String> productNames = [];
   List<String> productNamescb = [];
   List<Product> productscb = [];
-  bool isLoading = true;
-  int _activeIndex = 1;// Track loading state
+  List<Product> _products = [];
+
+  final TextEditingController _controller = TextEditingController();
+
+  void _navigateToSearchResults(String query) {
+    if (query.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SearchResultsPageC(email: widget.email,query: query),
+        ),
+      );
+    }
+  }
+
 
 
 
@@ -48,7 +60,8 @@ class _favoritesState extends State<favorites> {
 
   void initializeData() async {
     await _fetchUserProfile();  // Ensure this method fetches user profile and potentially sets 'email'
-    _fetchfavorites(email);
+    _fetchProductsByCategory(items[0]['text']);
+    _fetchcontentbased(email);
   }
 
   @override
@@ -81,49 +94,107 @@ class _favoritesState extends State<favorites> {
   }
 
 
-
-
-  Future<void> _fetchfavorites(String email) async {
-    print("Fetching products for email: $email");
-    setState(() {
-      isLoading = true;  // Start loading
-    });
+  Future<void> _fetchProductsByCategory(String category) async {
+    print("Fetching products for category: $category");
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.15:9000/${email}/favorites/'),
+        Uri.parse('http://192.168.1.15:9000/cosmetics/category/$category/'),
       );
 
       print("HTTP Response Code: ${response.statusCode}");
-      print("HTTP Response Body: ${response.body}");
+      print("HTTP Response Body: ${response
+          .body}"); // This will show exactly what the API returned
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as Map<String, dynamic>;
         final List<dynamic> productList = responseData['products'];
         setState(() {
-          productNamescb.clear();
-          productscb.clear();
+          products.clear();
+          productNames.clear();
           for (var productJson in productList) {
             Product product = Product.fromJson(productJson);
-            productscb.add(product);
-            productNamescb.add(product.productName);
+            products.add(product); // Add the product object to the products list
+            productNames.add(product.productName);
           }
-          print(productNamescb);
-          isLoading = false;  // Stop loading after data is fetched
+          print(productNames);
         });
       } else {
-        setState(() {
-          isLoading = false;  // Stop loading if there's an error
-        });
         throw Exception('Failed to load products');
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;  // Ensure loading is stopped if an exception occurs
-      });
       print('Error fetching products: $e');
     }
   }
 
+  Future<void> _fetchcontentbased(String email) async {
+    print("Fetching products for email: $email");
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.1.15:9000/${email}/contentbasedc/'),
+      );
+
+      print("HTTP Response Code: ${response.statusCode}");
+      print("HTTP Response Body: ${response
+          .body}"); // This will show exactly what the API returned
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> productList = responseData['products'];
+        setState(() {
+          for (var productJson in productList) {
+            Product product = Product.fromJson(productJson);
+            productscb.add(product); // Add the product object to the products list
+            productNamescb.add(product.productName);
+          }
+          print(productNamescb);
+        });
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+  }
+
+
+  final List<Map<String, dynamic>> items = [
+    {
+      'image': 'assets/images/boucle.png',
+      'text': 'Hair',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/creme-solaire.png',
+      'text': 'Protection',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/le-rasoir.png',
+      'text': 'Shaving',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/routine-dhygiene.png',
+      'text': 'Hygiene',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/se-reconcilier.png',
+      'text': 'Makeup',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/serum-a-la-vitamine-c.png',
+      'text': 'Skin',
+      'color': Color(0xffFDF6EC),
+    },
+    {
+      'image': 'assets/images/testeur-damygdales.png',
+      'text': 'Oral',
+      'color': Color(0xffFDF6EC),
+    },
+    // Add more items here
+  ];
 
 
   @override
@@ -181,94 +252,160 @@ class _favoritesState extends State<favorites> {
           ],
         ),
       ),
-      body:  isLoading
-          ? Center(
-        child: CircularProgressIndicator(color: Color(0xffECBE5C)),
-      )
-          : CustomScrollView(
+      body: CustomScrollView(
         slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20, left: 16.0, right: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hello, There!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Find your alternative now!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
+                      fontFamily: 'SF Pro Text',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+            sliver: SliverToBoxAdapter(
+              child: TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: Icon(Icons.search),
+                  filled: false,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(color: Colors.black, width: 2.0),
+                  ),
+                ),
+                onSubmitted: _navigateToSearchResults,
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+              child: Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 150,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = index;
+                        _fetchProductsByCategory(items[index]['text']);
+                      });
+                    },
+                    child: Container(
+                      width: 100,
+                      margin: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: _selectedIndex == index
+                            ? Color(0xffECBE5C)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset(
+                            items[index]['image'],
+                            width: 60,
+                            height: 60,
+                          ),
+                          SizedBox(height: 4,),
+                          Text(
+                            items[index]['text'],
+                            style: TextStyle(
+                              color: _selectedIndex == index
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontFamily: 'SF Pro Text',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
+              child: Text(
+                'Recommended for you:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
+            ),
+          ),
           buildProductsSliver(productNames: productNamescb, products: productscb),
-          // Additional SliverWidgets if needed
-        ],
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color(0xFFFDF6EC).withOpacity(0.01),
-        color: Color(0xFFECBE5C).withOpacity(0.9),
-        animationDuration: Duration(milliseconds: 250),
-        index: _activeIndex,
-        items: <Widget>[
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _activeIndex = 0;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => chatbot()),
-              );
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              child: Image.asset('assets/images/robot.png'),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left:16.0,right:16.0,top:16.0), // Adjust the padding as needed
+              child: Text(
+                'Products:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _activeIndex = 1;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => favorites(email: widget.email)),
-              );
-            },
-            child: Icon(Icons.favorite),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _activeIndex = 2;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScanApp(email: widget.email)),
-              );
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              child: Image.asset('assets/images/code-barres-lu.png'),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _activeIndex = 3;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>SecondPage(email: widget.email)),
-              );
-            },
-            child: Icon(Icons.home),
-          ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _activeIndex = 4;
-              });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Community(email: widget.email)),
-              );
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              child: Image.asset('assets/images/amis.png'),
-            ),
-          ),
+          buildProductsSliver(productNames: productNames, products: products),
+          // Call a method that returns a SliverList or SliverGrid
         ],
       ),
     );
@@ -345,7 +482,7 @@ class _favoritesState extends State<favorites> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          ProductPage(
+                                          ProductPageC(
                                               email: widget.email,
                                               productId: products[index].code),
                                     ),
