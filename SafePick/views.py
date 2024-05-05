@@ -429,6 +429,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Message
+
 @api_view(['POST'])
 def get_messages_in_community(request):
     if request.method == 'POST':
@@ -1288,5 +1289,369 @@ def check_favorite_status(request, email, product_id):
                 return JsonResponse({"is_favorite": False}, safe=False)
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+from pymongo.collection import ReturnDocument
+
+def update_user_code_C(request, email, code):
+    my_client = pymongo.MongoClient(settings.DB_NAME)
+    dbname = my_client['Safepick']
+    users = dbname["cosmetics.users"]
+
+    try:
+        # Ensure user exists or create a new one if not
+        user = users.find_one_and_update(
+            {'email': email},
+            {
+                '$setOnInsert': {
+                    'email': email,
+                    'codes': [],
+                    'user_id': None  # Updated below if it's a new user
+                }
+            },
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+
+        # Assign new user_id if this is a new user
+        if user['user_id'] is None:
+            max_user = users.find_one(sort=[("user_id", pymongo.DESCENDING)])
+            max_user_id = max_user["user_id"] if max_user and max_user["user_id"] is not None else 0
+            new_user_id = max_user_id + 1
+
+            users.update_one({'email': email}, {'$set': {'user_id': new_user_id}})
+
+        # Manage codes, ensuring there are no more than 6
+        if len(user['codes']) >= 6:
+            # Remove the oldest code
+            users.update_one({'email': email}, {'$pop': {'codes': -1}})  # $pop with -1 removes the first item
+
+        # Attempt to increment the code's count if it exists
+        result = users.update_one(
+            {"email": email, "codes.code": code},
+            {"$inc": {"codes.$.count": 1}},
+            upsert=False
+        )
+
+        if result.matched_count == 0:
+            # The code does not exist, add it with a count of 1
+            users.update_one(
+                {"email": email},
+                {"$push": {"codes": {"code": code, "count": 1}}}
+            )
+
+        return JsonResponse({"status": "success"}, safe=False)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+
+from django.http import JsonResponse
+import pymongo
+from pymongo import MongoClient
+import base64
+from django.conf import settings
+
+from bson import ObjectId
+import base64
+
+def serialize_doc(doc):
+    """ Recursively convert MongoDB documents, which may contain ObjectIds, into serializable formats. """
+    if isinstance(doc, dict):
+        for k, v in doc.items():
+            if isinstance(v, ObjectId):
+                doc[k] = str(v)
+            elif isinstance(v, bytes):
+                doc[k] = base64.b64encode(v).decode('utf-8')
+            else:
+                doc[k] = serialize_doc(v)
+    elif isinstance(doc, list):
+        doc = [serialize_doc(v) for v in doc]
+    return doc
+
+
+from django.http import JsonResponse
+import pymongo
+from pymongo import MongoClient
+from django.conf import settings
+
+def get_category_products(request, category):
+    # Connect to MongoDB
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+    categorized_products = db['category_products_food']
+
+    # Find the category document and retrieve 10 random codes
+    category_doc = categorized_products.find_one({"category": category})
+    if not category_doc or 'products' not in category_doc:
+        return JsonResponse({"error": "Category not found or no products available"}, status=404)
+
+    import random
+    product_codes = random.sample(category_doc['products'], min(10, len(category_doc['products'])))
+
+    # Fetch details for each product code from the 'food' collection
+    products_collection = db['food']
+    products = list(products_collection.find(
+        {"code": {"$in": product_codes}},
+        {"product_name": 1, "background_removed_image": 1, "code": 1, "nutriscore_score_out_of_100": 1}
+    ))
+
+    # Serialize each product document to be JSON-ready
+    products = [serialize_doc(product) for product in products]
+
+    # Convert to JSON and return response
+    return JsonResponse({"products": products}, safe=False)
+
+def get_products_by_category_cosmetics(request, category):
+    if request.method == 'GET':
+        client = MongoClient(settings.DB_NAME)
+        db = client['Safepick']
+        collection = db['cosmetics']  # Assuming 'cosmetics' is your collection name
+
+        # Fetch 10 products from the specified category
+        products_cursor = collection.find({'category': category}).limit(10)
+        products = list(products_cursor)  # Convert cursor to list
+
+        # Serialize each product document to be JSON-ready
+
+        products = [serialize_doc_2(product) for product in products]
+        productss = [serialize_doc(product) for product in products]
+
+    # Return JSON response
+        return JsonResponse({'products': productss}, safe=False)
+def serialize_doc_2(document):
+    """Helper function to convert MongoDB documents to JSON-serializable format"""
+    # Assuming specific fields to serialize, adjust as needed
+    return {
+        'code': document.get('code', ''),
+        'product_name': document.get('product_name', ''),
+        'background_removed_image': document.get('background_removed_image', ''),
+        'score': float(document.get('score', 0)),
+    }
+
+from django.http import JsonResponse
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+def content_based_recommendation(request, email):
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+
+    # Find the document in the recommendations collection by email
+    recommendations = db.food_recommendations.recommendations.find_one({"email": email})
+
+    # If no recommendations are found for the email, return an empty list
+    if not recommendations:
+        return JsonResponse({'error': 'No recommendations found for this email'}, status=404)
+
+    # Extract product codes
+    product_codes = recommendations['recommended_products']
+
+    # Fetch details from the food collection for each product code
+    product_details = []
+    for code in product_codes:
+        product = db.food.find_one({"code": code}, {'product_name': 1, 'nutriscore_score_out_of_100': 1, 'background_removed_image': 1})
+        if product:
+            product_details.append({
+                'product_name': product.get('product_name', ''),
+                'nutriscore_score_out_of_100': product.get('nutriscore_score_out_of_100', -1),
+                'background_removed_image': product.get('background_removed_image', '')
+            })
+
+    products = [serialize_doc(product) for product in product_details]
+
+
+    # Return the product details as JSON
+    return JsonResponse({'products': products})
+
+def content_based_recommendation_c(request, email):
+    client = MongoClient(settings.DB_NAME)
+    db = client['Safepick']
+
+    # Find the document in the recommendations collection by email
+    recommendations = db.cosmetics_recommendations.recommendations.find_one({"email": email})
+
+    # If no recommendations are found for the email, return an empty list
+    if not recommendations:
+        return JsonResponse({'error': 'No recommendations found for this email'}, status=404)
+
+    # Extract product codes
+    product_codes = recommendations['recommended_products']
+
+    # Fetch details from the food collection for each product code
+    product_details = []
+    for code in product_codes:
+        product = db['cosmetics'].find_one({'code': code}, {'product_name': 1, 'score': 1, 'background_removed_image': 1})
+        if product:
+            product_details.append({
+                'product_name': product.get('product_name', ''),
+                'score': product.get('score', -1),
+                'background_removed_image': product.get('background_removed_image', ''),
+                'code': int(product.get('code', '0'))
+            })
+    productsc = [serialize_doc_2(product) for product in product_details]
+
+
+    products = [serialize_doc(product) for product in productsc]
+
+
+    # Return the product details as JSON
+    return JsonResponse({'products': products})
+
+from django.conf import settings
+from pymongo import MongoClient
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+@api_view(['GET'])
+def dynamic_collection_api(request):
+    query = request.GET.get('q', '')
+
+    # Connect to MongoDB using settings
+    client = MongoClient(settings.DB_NAME)  # Make sure to use the correct settings attribute for your MongoDB URI
+    db = client['Safepick']
+    collection = db['food']
+
+    # Perform the query
+    if query:
+        search_results = list(collection.find({"product_name": {"$regex": query, "$options": "i"}}))
+        client.close()  # Important to close the connection
+        products = [serialize_doc(product) for product in search_results]
+
+
+        # You would still need to serialize the data here manually
+        return Response({"data": products})
+    else:
+        return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def dynamic_collection_api_c(request):
+    query = request.GET.get('q', '')
+
+    # Connect to MongoDB using settings
+    client = MongoClient(settings.DB_NAME)  # Make sure to use the correct settings attribute for your MongoDB URI
+    db = client['Safepick']
+    collection = db['cosmetics']
+
+    # Perform the query
+    if query:
+        search_results = list(collection.find({"product_name": {"$regex": query, "$options": "i"}}))
+        client.close()  # Important to close the connection
+        productss = [serialize_doc_2(product) for product in search_results]
+
+        products = [serialize_doc(product) for product in productss]
+
+
+        # You would still need to serialize the data here manually
+        return Response({"data": products})
+    else:
+        return Response({"message": "No query provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Message  # Ensure this is correctly mapped to MongoDB
+
+@api_view(['POST'])
+def search_messages_in_community(request):
+    community_name = request.data.get('community_name')
+    search_term = request.data.get('search_term')
+
+    if not community_name or not search_term:
+        return Response({"error": "Both community name and search term are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Assuming using Djongo to query MongoDB
+        messages = Message.objects.filter(
+            community_name=community_name,
+            content__icontains=search_term
+        ).order_by('-timestamp')
+
+        if not messages:
+            return Response({"error": "No messages found"}, status=status.HTTP_404_NOT_FOUND)
+
+        messages_data = [{
+
+            "email": message.email,
+            "content": message.content,
+            "timestamp": message.timestamp.isoformat()
+        } for message in messages]
+
+        return Response({
+
+            "messages": messages_data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PATCH'])
+def update_user_name(request):
+    if request.method == 'PATCH':
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_profile = get_object_or_404(UserProfile, email=email)
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from django.contrib.auth.hashers import make_password
+@api_view(['PATCH'])
+def update_user_password(request):
+    if request.method == 'PATCH':
+        email = request.data.get('email')
+        new_password = request.data.get('new_password')
+
+        if not email or not new_password:
+            return Response({'error': 'Email and new password are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Fetching the user profile
+        user_profile = get_object_or_404(UserProfile, email=email)
+
+        # Hashing the new password before saving it
+        user_profile.password = make_password(new_password)
+
+        # Creating a serializer instance with the updated user data
+        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            # Saving the new password to the database
+            serializer.save()
+            return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import UserProfile, Message,CommunityMember
+
+@api_view(['DELETE'])
+def delete_user_profile(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Fetching the user profile
+    user_profile = get_object_or_404(UserProfile, email=email)
+
+    # Delete user messages
+    Message.objects.filter(email=email).delete()
+
+    # Delete community memberships
+    CommunityMember.objects.filter(email=email).delete()
+
+    # Delete the user profile
+    user_profile.delete()
+
+    return Response({'message': 'User account and related data successfully deleted'}, status=status.HTTP_200_OK)
+
+
+
+
+
 
 

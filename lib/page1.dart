@@ -62,18 +62,18 @@ const TextStyle descriptionWhiteStyle = TextStyle(
 class Rectangle extends StatelessWidget {
   final bool active;
 
-  const Rectangle({Key? key, required this.active}) : super(key: key);
+  const Rectangle({super.key, required this.active});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 20.0, 
       height: 20.0, 
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
           bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
-            ? Color(0xFF5CB287)
+            ? const Color(0xFF5CB287)
             : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
@@ -86,18 +86,18 @@ class Rectangle extends StatelessWidget {
 class Rectangletwo extends StatelessWidget {
   final bool active;
 
-  const Rectangletwo({Key? key, required this.active}) : super(key: key);
+  const Rectangletwo({super.key, required this.active});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 20.0, 
       height: 20.0, 
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
           bottom: 40.0, left: 10.0, right: 10),
       decoration: BoxDecoration(
         color: active
-            ? Color(0xFFECBE5C)
+            ? const Color(0xFFECBE5C)
             : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
@@ -110,18 +110,18 @@ class Rectangletwo extends StatelessWidget {
 class Rectanglethree extends StatelessWidget {
   final bool active;
 
-  const Rectanglethree({Key? key, required this.active}) : super(key: key);
+  const Rectanglethree({super.key, required this.active});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 20.0,
       height: 20.0, 
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
           bottom: 40.0, left: 10.0, right: 10), 
       decoration: BoxDecoration(
         color: active
-            ? Color.fromRGBO(238, 166, 66, 1)
+            ? const Color.fromRGBO(238, 166, 66, 1)
             : Colors.white, 
         borderRadius: BorderRadius.circular(2.0),
         border:
@@ -132,10 +132,12 @@ class Rectanglethree extends StatelessWidget {
 }
 
 class FirstPage extends StatelessWidget {
+  const FirstPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFFFDF6EC),
+      color: const Color(0xFFFDF6EC),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +147,7 @@ class FirstPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
+                const Text(
                   "SAFEPICK",
                   style: goldcoinGreyStyle,
                 ),
@@ -154,10 +156,10 @@ class FirstPage extends StatelessWidget {
                     
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignIn()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Skip",
                     style: goldcoinGreyStyle,
                   ),
@@ -166,8 +168,8 @@ class FirstPage extends StatelessWidget {
             ),
           ),
           Image.asset("assets/images/logo.png"),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -190,7 +192,7 @@ class FirstPage extends StatelessWidget {
               ],
             ),
           ),
-          Row(
+          const Row(
             children: <Widget>[
               SizedBox(width: 20.0), 
               Rectangle(active: true),
@@ -207,10 +209,12 @@ class FirstPage extends StatelessWidget {
 }
 
 class SeconPage extends StatelessWidget {
+  const SeconPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFF5CB287),
+      color: const Color(0xFF5CB287),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +224,7 @@ class SeconPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
+                const Text(
                   "SAFEPICK",
                   style: goldCoinWhiteStyle,
                 ),
@@ -229,10 +233,10 @@ class SeconPage extends StatelessWidget {
                     
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignIn()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Skip",
                     style: goldcoinGreyStyle,
                   ),
@@ -241,14 +245,14 @@ class SeconPage extends StatelessWidget {
             ),
           ),
           Center(
-            child: Container(
+            child: SizedBox(
               width: 230, 
               height: 300, 
               child: Image.asset("assets/images/img_image_1.png"),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
+          const Padding(
+            padding: EdgeInsets.only(
                 left: 20.0, right: 30.0, top: 10), 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,10 +277,10 @@ class SeconPage extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
               height:
                   5.0), 
-          Row(
+          const Row(
             children: <Widget>[
               SizedBox(width: 20.0), 
               Rectangletwo(active: false),
@@ -293,10 +297,12 @@ class SeconPage extends StatelessWidget {
 }
 
 class ThirdPage extends StatelessWidget {
+  const ThirdPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFFECBE5C),
+      color: const Color(0xFFECBE5C),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +312,7 @@ class ThirdPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
+                const Text(
                   "SAFEPICK",
                   style: goldCoinWhiteStyle,
                 ),
@@ -315,10 +321,10 @@ class ThirdPage extends StatelessWidget {
                     // Navigate to page2
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
+                      MaterialPageRoute(builder: (context) => const SignIn()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Skip",
                     style: goldcoinGreyStyle,
                   ),
@@ -339,7 +345,7 @@ class ThirdPage extends StatelessWidget {
                     alignment: Alignment.topRight,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 0,
                 ),
                 SizedBox(
@@ -352,7 +358,7 @@ class ThirdPage extends StatelessWidget {
                     alignment: Alignment.topLeft,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 0,
                 ),
                 Padding(
@@ -367,8 +373,8 @@ class ThirdPage extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.0),
             child: Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Column(
@@ -393,7 +399,7 @@ class ThirdPage extends StatelessWidget {
               ),
             ),
           ),
-          Row(
+          const Row(
             children: <Widget>[
               SizedBox(width: 20.0),
               Rectanglethree(active: false),

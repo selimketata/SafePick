@@ -4,7 +4,7 @@ class UserAvatar extends StatelessWidget {
   final Function(String) onAvatarSelected;
 
   final String selectedAvatar;
-  UserAvatar({
+  const UserAvatar({super.key, 
     required this.onAvatarSelected,
     required this.selectedAvatar, // Add selectedAvatar parameter to the constructor
   });
@@ -16,9 +16,9 @@ class UserAvatar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
+            const SizedBox(height: 40),
+            const Padding(
+              padding: EdgeInsets.all(20.0),
               child: Text(
                 'Choose Your Avatar',
                 style: TextStyle(
@@ -29,12 +29,12 @@ class UserAvatar extends StatelessWidget {
               ),
             ),
             GridView.count(
-              physics: NeverScrollableScrollPhysics(), // Disable scrolling of GridView
+              physics: const NeverScrollableScrollPhysics(), // Disable scrolling of GridView
               shrinkWrap: true, // Allow GridView to scroll within SingleChildScrollView
               crossAxisCount: 3, // Adjust the crossAxisCount based on your preference
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               children: [
                 for (int i = 1; i <= 25; i++)
                   GestureDetector(

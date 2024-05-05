@@ -5,8 +5,7 @@ import 'dart:convert';
 class UpdateUserPasswordPage extends StatefulWidget {
   final String email;
 
-  const UpdateUserPasswordPage({Key? key, required this.email})
-      : super(key: key);
+  const UpdateUserPasswordPage({super.key, required this.email});
 
   @override
   _UpdateUserPasswordPageState createState() => _UpdateUserPasswordPageState();
@@ -34,7 +33,7 @@ class _UpdateUserPasswordPageState extends State<UpdateUserPasswordPage> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://192.168.1.16:9000/update_user_password/');
+    final url = Uri.parse('http://192.168.1.15:9000/update_user_password/');
     try {
       final response = await http.patch(
         url,
@@ -69,7 +68,7 @@ class _UpdateUserPasswordPageState extends State<UpdateUserPasswordPage> {
         content: Text(content),
         actions: <Widget>[
           TextButton(
-            child: Text('Okay'),
+            child: const Text('Okay'),
             onPressed: () {
               Navigator.of(ctx).pop(); // Close the dialog
               if (title == 'Success') {
@@ -87,7 +86,7 @@ class _UpdateUserPasswordPageState extends State<UpdateUserPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Password'),
+        title: const Text('Update Password'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -96,21 +95,21 @@ class _UpdateUserPasswordPageState extends State<UpdateUserPasswordPage> {
           children: <Widget>[
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'New Password'),
+              decoration: const InputDecoration(labelText: 'New Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _confirmPasswordController,
-              decoration: InputDecoration(labelText: 'Confirm New Password'),
+              decoration: const InputDecoration(labelText: 'Confirm New Password'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: _updatePassword,
-                    child: Text('Update Password'),
+                    child: const Text('Update Password'),
                   ),
           ],
         ),

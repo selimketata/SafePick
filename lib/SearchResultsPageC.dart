@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/product_page_forscan.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/productF-.dart'; // Adjust the path as necessary
+import '../models/productC-.dart'; // Adjust the path as necessary
 
-class SearchResultsPage extends StatefulWidget {
+class SearchResultsPageC extends StatefulWidget {
   final String query;
   final String email;  // Added email property
 
-  const SearchResultsPage({super.key, required this.query, required this.email});
+  SearchResultsPageC({required this.query, required this.email});
 
   @override
-  _SearchResultsPageState createState() => _SearchResultsPageState();
+  _SearchResultsPageCState createState() => _SearchResultsPageCState();
 }
 
-class _SearchResultsPageState extends State<SearchResultsPage> {
+class _SearchResultsPageCState extends State<SearchResultsPageC> {
   List<Product> _products = [];
   bool _isLoading = true;
 
@@ -26,7 +26,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   Future<void> _fetchData(String query) async {
     try {
-      final response = await http.get(Uri.parse("http://192.168.1.15:9000/food/search/?q=$query"));
+      final response = await http.get(Uri.parse("http://192.168.1.15:9000/cosmetics/search/?q=$query"));
       if (response.statusCode == 200) {
         List<dynamic> productsJson = json.decode(response.body)['data'];
         setState(() {
@@ -51,18 +51,18 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffFDF6EC),
+      backgroundColor: Color(0xffFDF6EC),
       appBar: AppBar(
         title: Text('Search Results for "${widget.query}"',
-          style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
-          fontFamily: 'SF Pro Text',
-        ),),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+            fontFamily: 'SF Pro Text',
+          ),),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xffECBE5C)))
+          ? Center(child: CircularProgressIndicator(color: Color(0xffECBE5C)))
           : CustomScrollView(
         slivers: <Widget>[
           buildProductsSliver(products: _products),
@@ -73,7 +73,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   Widget buildProductsSliver({required List<Product> products}) {
     return SliverPadding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -100,7 +100,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     title: Text(product.productName),
                     subtitle: Text('${product.nutriScoreOutOf100}/100'),
                     trailing: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios),
+                      icon: Icon(Icons.arrow_forward_ios),
                       onPressed: () {
                         Navigator.push(
                           context,

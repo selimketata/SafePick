@@ -72,7 +72,7 @@ class SerpentPainter extends CustomPainter {
 class HomePage extends StatelessWidget {
    final String email;
 
-  const HomePage({Key? key, required this.email}) : super(key: key);
+  const HomePage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'dart:convert';
 class UpdateUsernamePage extends StatefulWidget {
   final String email;
 
-  const UpdateUsernamePage({Key? key, required this.email}) : super(key: key);
+  const UpdateUsernamePage({super.key, required this.email});
 
   @override
   _UpdateUsernamePageState createState() => _UpdateUsernamePageState();
@@ -21,11 +21,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('Validation'),
-          content: Text('Username cannot be empty.'),
+          title: const Text('Validation'),
+          content: const Text('Username cannot be empty.'),
           actions: <Widget>[
             TextButton(
-              child: Text('Okay'),
+              child: const Text('Okay'),
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -40,7 +40,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://192.168.1.16:9000/update_user_name/');
+    final url = Uri.parse('http://192.168.1.15:9000/update_user_name/');
     try {
       final response = await http.patch(
         url,
@@ -58,11 +58,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Success'),
-            content: Text('Username successfully updated.'),
+            title: const Text('Success'),
+            content: const Text('Username successfully updated.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Okay'),
+                child: const Text('Okay'),
                 onPressed: () {
                   Navigator.of(ctx).pop(); // Close the dialog
                   Navigator.of(context)
@@ -76,11 +76,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to update username. Please try again.'),
+            title: const Text('Error'),
+            content: const Text('Failed to update username. Please try again.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Okay'),
+                child: const Text('Okay'),
                 onPressed: () {
                   Navigator.of(ctx).pop();
                 },
@@ -93,11 +93,11 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text('An error occurred: $e'),
           actions: <Widget>[
             TextButton(
-              child: Text('Okay'),
+              child: const Text('Okay'),
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -116,7 +116,7 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Username'),
+        title: const Text('Update Username'),
       ),
       body: Center(
         child: Padding(
@@ -126,14 +126,14 @@ class _UpdateUsernamePageState extends State<UpdateUsernamePage> {
             children: <Widget>[
               TextField(
                 controller: _usernameController,
-                decoration: InputDecoration(labelText: 'New Username'),
+                decoration: const InputDecoration(labelText: 'New Username'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: _updateUsername,
-                      child: Text('Update Username'),
+                      child: const Text('Update Username'),
                     ),
             ],
           ),
