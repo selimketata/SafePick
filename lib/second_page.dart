@@ -6,7 +6,8 @@ import 'dart:convert';
 import 'MainPage_C.dart';
 import 'ProfilePage.dart';
 import 'Community.dart';
-import 'ChatBot.dart';
+
+import 'chatbot.dart';
 
 class SecondPage extends StatefulWidget {
   final String email;
@@ -48,9 +49,9 @@ class _SecondPageState extends State<SecondPage> {
       () => Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) =>  mainpagef(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => mainpagef(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) => mainpagec(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => mainpagef(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) => Community(email: widget.email))),
     ];
   }
 

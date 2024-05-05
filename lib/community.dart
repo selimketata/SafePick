@@ -204,26 +204,11 @@ class _CommunityState extends State<Community> {
       ),
 
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color(0xFFFDF6EC).withOpacity(0.1),
+        backgroundColor: Color(0xFFFDF6EC).withOpacity(0.01),
         color: Color(0xFFECBE5C).withOpacity(0.9),
         animationDuration: Duration(milliseconds: 250),
         index: _activeIndex,
         items: <Widget>[
-
-           GestureDetector(
-             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Chatbot()),
-              );
-            },
-         child :  SizedBox(
-            width: 30,
-            height: 30,
-            child: Image.asset('assets/images/robot.png'),
-          ),),
-          const Icon(Icons.favorite),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -262,13 +247,12 @@ class _CommunityState extends State<Community> {
                 MaterialPageRoute(builder: (context) => ScanApp(email: widget.email)),
               );
             },
-            child: SizedBox(
+            child: Container(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/code-barres-lu.png'),
             ),
           ),
-          const Icon(Icons.home),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -291,7 +275,7 @@ class _CommunityState extends State<Community> {
                 MaterialPageRoute(builder: (context) => Community(email: widget.email)),
               );
             },
-            child: SizedBox(
+            child: Container(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/amis.png'),
