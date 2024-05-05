@@ -8,6 +8,7 @@ import 'package:flutter_application_2/product_page_forscan.dart';
 import 'package:flutter_application_2/scan.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'Community.dart';
 import 'SearchResultsPage.dart';
 import 'ProfilePage.dart';
@@ -204,7 +205,7 @@ class _favoritesState extends State<favorites> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => chatbot()),
+                MaterialPageRoute(builder: (context) => Chatbot()),
               );
             },
             child: Container(

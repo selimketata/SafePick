@@ -7,10 +7,10 @@ class CommunityDiscussionPage extends StatefulWidget {
   final String communityName;
 
   const CommunityDiscussionPage({
-    Key? key,
+    super.key,
     required this.email,
     required this.communityName,
-  }) : super(key: key);
+  });
 
   @override
   _CommunityDiscussionPageState createState() =>
@@ -36,7 +36,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
         decoration: InputDecoration(
           labelText: 'Search Messages',
           suffixIcon: IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               // Check if the search text is empty
               if (_searchController.text.isEmpty) {
@@ -62,26 +62,26 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFDF6EC), // Set the background color here
+      backgroundColor: const Color(0xFFFDF6EC), // Set the background color here
       appBar: AppBar(
         title: Text(
           widget.communityName,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold, // Makes the text bold
           ),
         ),
-        backgroundColor: Color(0xFFFDF6EC),
+        backgroundColor: const Color(0xFFFDF6EC),
         leading: IconButton(
-          icon: CircleAvatar(
+          icon: const CircleAvatar(
             backgroundColor: Color(0xFF5CB287),
             child: Icon(Icons.arrow_back, color: Colors.white),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(4.0),
+          preferredSize: const Size.fromHeight(4.0),
           child: Container(
-            color: Color(0xFF5CB287),
+            color: const Color(0xFF5CB287),
             height: 4.0,
           ),
         ),
@@ -101,7 +101,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
                   width: 300,
                   child: Container(
                     margin:
-                    EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
                           ? CrossAxisAlignment.end
@@ -118,7 +118,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   } else {
                                     return CircleAvatar(
                                       backgroundImage: AssetImage(
@@ -128,20 +128,20 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
                                   }
                                 },
                               ),
-                            if (!isCurrentUser) SizedBox(width: 8.0),
+                            if (!isCurrentUser) const SizedBox(width: 8.0),
                             Text(
                               '${DateTime.parse(message['timestamp']).toLocal()}',
                               style:
-                              TextStyle(fontSize: 12.0, color: Colors.grey),
+                                  const TextStyle(fontSize: 12.0, color: Colors.grey),
                             ),
-                            if (isCurrentUser) SizedBox(width: 8.0),
+                            if (isCurrentUser) const SizedBox(width: 8.0),
                             if (isCurrentUser)
                               FutureBuilder(
                                 future: _fetchUserProfile(widget.email),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   } else {
                                     return CircleAvatar(
                                       backgroundImage: AssetImage(
@@ -153,20 +153,20 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
                               ),
                           ],
                         ),
-                        SizedBox(height: 4.0),
+                        const SizedBox(height: 4.0),
                         Padding(
                           padding: EdgeInsets.only(
                               left: isCurrentUser ? 0.0 : 40.0,
                               right: isCurrentUser ? 40.0 : 0.0),
                           child: Container(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: Text(
                               message['content'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromRGBO(21, 20, 20, 1)),
@@ -201,19 +201,19 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
             Flexible(
               child: TextField(
                 controller: _messageController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     hintText: "Send a message",
                     border: InputBorder
                         .none, // Removes default underline on TextField
                     contentPadding: EdgeInsets.symmetric(
                         horizontal: 10.0,
                         vertical: 10.0) // Adds padding inside the TextField
-                ),
+                    ),
               ),
             ),
             IconButton(
               icon: const Icon(Icons.send),
-              color: Color(0xFF5CB287), // Set the icon color to #5CB287
+              color: const Color(0xFF5CB287), // Set the icon color to #5CB287
               onPressed: () => _handleSubmitted(_messageController.text),
             ),
           ],
@@ -230,7 +230,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   }
 
   Future<void> _sendMessage(String text) async {
-    final url = 'http://192.168.1.15:9000/create_message/';
+    const url = 'http://192.168.1.16:9000/create_message/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -249,7 +249,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   }
 
   Future<String> _fetchUserProfile(String email) async {
-    final url = 'http://192.168.1.15:9000/get_user_profile/';
+    const url = 'http://192.168.1.16:9000/get_user_profile/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -267,7 +267,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   }
 
   Future<void> _fetchDiscussionHistory(String communityName) async {
-    final url = 'http://192.168.1.15:9000/get_messages_in_community/';
+    const url = 'http://192.168.1.16:9000/get_messages_in_community/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -292,7 +292,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
 
   Future<void> _searchMessages(String searchTerm) async {
     final response = await http.post(
-      Uri.parse('http://192.168.1.15:9000/search_messages_in_community/'),
+      Uri.parse('http://192.168.1.16:9000/search_messages_in_community/'),
       body: {
         'community_name': widget.communityName,
         'search_term': searchTerm,

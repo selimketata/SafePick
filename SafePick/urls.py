@@ -38,6 +38,11 @@ path('cosmetics/category/<str:category>/', views.get_products_by_category_cosmet
 path('<str:email>/contentbasedc/',views.content_based_recommendation_c,name='content_based_c'),
 path('food/search/', views.dynamic_collection_api, name='DynamicCollectionAPIView'),
 path('cosmetics/search/', views.dynamic_collection_api_c, name='search_cosmetics'),
+
+path('search_messages_in_community/', views.search_messages_in_community, name='search_messages_in_community'),
+path('update_user_name/', views.update_user_name, name='update_user_name'),
+path('update_user_password/', views.update_user_password, name='update_user_password'),
+path('delete_user_profile/', views.delete_user_profile, name='delete_user_profile'),
 path('favorites/<str:email>/<int:code>/', views.update_user_favorites, name='update_user_favorites'),
 path('<str:email>/favorites/', views.favorites_get, name='favorites_get'),
 path('favorites/check/<str:email>/<str:product_id>/', views.check_favorite_status, name='check_favorite_status'),
@@ -62,7 +67,8 @@ path('favorites/check/<str:email>/<str:product_id>/', views.check_favorite_statu
     path('get_messages_in_community/', get_messages_in_community, name='get_messages_in_community'),
     path('alternatives/food/<int:product_code>/', views.food_Alternatives, name='food_Alternatives'),
     path('alternatives/cosmetics/<int:product_code>/', views.cosmetics_Alternatives, name='cosmetics_Alternatives'),
-    path('delete_message/', views.delete_message, name='delete_message'),
+ 
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

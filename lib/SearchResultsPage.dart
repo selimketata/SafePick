@@ -8,7 +8,7 @@ class SearchResultsPage extends StatefulWidget {
   final String query;
   final String email;  // Added email property
 
-  SearchResultsPage({required this.query, required this.email});
+  const SearchResultsPage({super.key, required this.query, required this.email});
 
   @override
   _SearchResultsPageState createState() => _SearchResultsPageState();
@@ -51,10 +51,10 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFDF6EC),
+      backgroundColor: const Color(0xffFDF6EC),
       appBar: AppBar(
         title: Text('Search Results for "${widget.query}"',
-          style: TextStyle(
+          style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: Colors.black,
@@ -62,7 +62,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         ),),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(color: Color(0xffECBE5C)))
+          ? const Center(child: CircularProgressIndicator(color: Color(0xffECBE5C)))
           : CustomScrollView(
         slivers: <Widget>[
           buildProductsSliver(products: _products),
@@ -73,7 +73,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   Widget buildProductsSliver({required List<Product> products}) {
     return SliverPadding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -100,7 +100,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     title: Text(product.productName),
                     subtitle: Text('${product.nutriScoreOutOf100}/100'),
                     trailing: IconButton(
-                      icon: Icon(Icons.arrow_forward_ios),
+                      icon: const Icon(Icons.arrow_forward_ios),
                       onPressed: () {
                         Navigator.push(
                           context,

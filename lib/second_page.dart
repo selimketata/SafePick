@@ -1,20 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/MainPage_F.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'MainPage_C.dart';
 import 'ProfilePage.dart';
 import 'Community.dart';
-import 'food.dart';
-import 'cosmetic.dart';
 import 'ChatBot.dart';
-import 'scan.dart';
 
 class SecondPage extends StatefulWidget {
   final String email;
 
-  const SecondPage({Key? key, required this.email}) : super(key: key);
+  const SecondPage({super.key, required this.email});
 
   @override
   _SecondPageState createState() => _SecondPageState();
@@ -23,7 +19,7 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   int _currentIndex = 0;
 
-  List<String> _icons = [
+  final List<String> _icons = [
     'assets/images/icon1.png',
     'assets/images/icon2.png',
     'assets/images/icon3.png',
@@ -44,25 +40,23 @@ class _SecondPageState extends State<SecondPage> {
 
   void _initializeRoutes() {
     _routes = [
+      () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Chatbot())),
       () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Community(email: widget.email))),
-      () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => mainpagef(email: widget.email))),
-
       () => Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) =>  mainpagec(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) => Chatbot())),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ScanApp(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) => Chatbot())),
     ];
   }
 
   Future<void> _fetchUserPhoto() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -79,26 +73,10 @@ class _SecondPageState extends State<SecondPage> {
     }
   }
 
-  List<String> _Names = [
-    'Communities',
-    'Aliments',
-    'Cosmetics',
-    'Chatbot',
-    'Scan',
-  ];
-  List<String> _Description = [
-    'Check the discussions about your intrests',
-    'Get to know the nutriments of aliments and check their alternatives',
-    'Get to know the ingredients of cosmetics and check their alternatives',
-    'Chat with our chatbot to get a customized response ',
-    'Scan your product directly',
-  ];
-
-
   @override
   Widget build(BuildContext context) {
     if (_routes.isEmpty) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -114,7 +92,7 @@ class _SecondPageState extends State<SecondPage> {
             left: 30,
             child: GestureDetector(
               onTap: () {},
-              child: Icon(
+              child: const Icon(
                 Icons.help_outline,
                 size: 20,
                 color: Colors.black,
@@ -133,7 +111,7 @@ class _SecondPageState extends State<SecondPage> {
                 alignment: Alignment.center,
                 children: [
                   // Placeholder or loading indicator
-                  CircularProgressIndicator(), // Replace this with your desired placeholder widget
+                  const CircularProgressIndicator(), // Replace this with your desired placeholder widget
 
                   // Image asset
                   Image.asset(
@@ -210,34 +188,20 @@ class _SecondPageState extends State<SecondPage> {
                                           left: 16, // Adjust these values
                                           child: Container(
                                             width: 180,
-                                            height: 220, // Adjust width and height of the container
+                                            height:
+                                                220, // Adjust width of the slide
                                             decoration: BoxDecoration(
-                                              color: Colors.white, // Add background color here
-                                              borderRadius: BorderRadius.circular(50),
+                                              color: Colors
+                                                  .white, // Add background color here
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.grey.withOpacity(0.5),
+                                                  color: Colors.grey
+                                                      .withOpacity(0.5),
                                                   spreadRadius: 5,
                                                   blurRadius: 7,
                                                   offset: const Offset(0, 3),
-                                                ),
-                                              ],
-                                            ),
-                                            padding: EdgeInsets.only(top: 20,left:3.0,right:3.0), // Add padding to create space between container and text
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Flexible( // Use Flexible or Expanded to allow text to wrap
-                                                  child: Text(
-                                                    _Description[index],
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-
-                                                      color: Colors.black,
-                                                    ),
-                                                    textAlign: TextAlign.center, // Center text horizontally
-                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -247,30 +211,16 @@ class _SecondPageState extends State<SecondPage> {
                                         Positioned(
                                           top: 4, // Adjust these values
                                           left: 42, // Adjust these values
-                                          child: Column(
-                                            children: [
-                                              Opacity(
-                                                opacity: _currentIndex == index ? 1.0 : 0.3,
-                                                child: Image.asset(
-                                                  _icons[index],
-                                                  width: 130.0,
-                                                  height: 130.0,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                              SizedBox(height: 5,),
-                                              Text(
-                                                _Names[index],
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontFamily: 'Harmonia Sans W01 Regular',
-                                                ),
-                                              ),
-
-
-                                            ],
+                                          child: Opacity(
+                                            opacity: _currentIndex == index
+                                                ? 1.0
+                                                : 0.3,
+                                            child: Image.asset(
+                                              _icons[index],
+                                              width: 130.0,
+                                              height: 130.0,
+                                              fit: BoxFit.contain,
+                                            ),
                                           ),
                                         ),
                                         Positioned(
@@ -294,7 +244,7 @@ class _SecondPageState extends State<SecondPage> {
                                               ),
                                               side: MaterialStateProperty.all<
                                                   BorderSide>(
-                                                BorderSide(
+                                                const BorderSide(
                                                   color: Colors.white,
                                                   width: 5.0,
                                                 ),

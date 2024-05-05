@@ -35,12 +35,13 @@ class ProductPage extends StatefulWidget {
   final String email;
   final int productId;
 
-
-  const ProductPage({Key? key, required this.email,required this.productId}) : super(key: key);
+  const ProductPage({Key? key, required this.email, required this.productId})
+      : super(key: key);
 
   @override
   _ProductPageState createState() => _ProductPageState();
 }
+
 class _ProductPageState extends State<ProductPage> {
   late String username = "";
   late String photo = "";
@@ -53,9 +54,11 @@ class _ProductPageState extends State<ProductPage> {
     sendcontentbased();
     _checkFavoriteStatus();
   }
+
   Future<void> _checkFavoriteStatus() async {
     // Construct the URL to check the favorite status
-    String checkUrl = 'http://192.168.1.15:9000/favorites/check/${widget.email}/${widget.productId}/';
+    String checkUrl =
+        'http://192.168.1.15:9000/favorites/check/${widget.email}/${widget.productId}/';
     try {
       var response = await http.get(Uri.parse(checkUrl));
       if (response.statusCode == 200) {
@@ -89,7 +92,6 @@ class _ProductPageState extends State<ProductPage> {
     try {
       final response = await http.post(
         Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
         body: {'email': widget.email},
       );
 
@@ -106,6 +108,7 @@ class _ProductPageState extends State<ProductPage> {
       print('Error fetching user profile: $e');
     }
   }
+
   Future<void> sendcontentbased() async {
     String baseUrl = "http://192.168.1.15:9000";
     String url = '$baseUrl/${widget.email}/${widget.productId}/';
@@ -120,12 +123,7 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
-
-
-
   final apiService = ApiService();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,224 +151,310 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           actions: [
-          Container(
-          width: 47,
-          height: 47,
-          decoration: BoxDecoration(
-            color: Color(0xFFECBE5C),
-            shape: BoxShape.circle,
-          ),
-          margin: EdgeInsets.only(right: 10),
-          child: IconButton(
-            icon: Icon(Icons.favorite, color: isFavorite ? Colors.red : Colors.white),
-            onPressed: toggleFavorite,
-          ),
-        ),
+            Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                color: Color(0xFFECBE5C),
+                shape: BoxShape.circle,
+              ),
+              margin: EdgeInsets.only(right: 10),
+              child: IconButton(
+                icon: Icon(Icons.favorite,
+                    color: isFavorite ? Colors.red : Colors.white),
+                onPressed: toggleFavorite,
+              ),
+            ),
           ],
         ),
       ),
       body: Stack(
-          children: [
-            Padding(
-        padding: const EdgeInsets.only(top: 0.0, left: 16.0, right: 16.0, bottom: 40.0),
-        child: SingleChildScrollView(
-          child: Center(
-            child: FutureBuilder<ProductF>(
-              future: apiService.fetchProduct(widget.productId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(color: Color(0xffECBE5C)),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                } else if (snapshot.hasData) {
-                  final product = snapshot.data!;
-                  final image = snapshot.data!.backgroundRemovedImage;
-                  Uint8List byte = base64Decode(image!);
-                  final nutrientMap = snapshot.data!.nutrientMap;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 0.0, left: 16.0, right: 16.0, bottom: 40.0),
+            child: SingleChildScrollView(
+              child: Center(
+                child: FutureBuilder<ProductF>(
+                  future: apiService.fetchProduct(widget.productId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child:
+                            CircularProgressIndicator(color: Color(0xffECBE5C)),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("Error: ${snapshot.error}");
+                    } else if (snapshot.hasData) {
+                      final product = snapshot.data!;
+                      final image = snapshot.data!.backgroundRemovedImage;
+                      Uint8List byte = base64Decode(image!);
+                      final nutrientMap = snapshot.data!.nutrientMap;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Row containing circles
-                          Row(
+                          Stack(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 30, top: 20),
-                                child: Container(
-                                  width: 20,
-                                  height:20,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xffECBE5C),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 0, top: 0),
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xff5CB287),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 190, top: 40),  // Adjusted for simplicity
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xffECBE5C),
-                                  ),
-                                ),
-                              ),
-
-                            ],
-                          ),
-                          // Positioned Text in the center with wrapping
-                          Positioned.fill(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 50),  // Increase padding to ensure text does not overlap with the circles too much
-                                child: Text(
-                                  product.productName ?? 'No Name',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Harmonia Sans W01 Regular',
-                                  ),
-                                  softWrap: true,
-                                  overflow: TextOverflow.fade,  // Handles text overflow gracefully
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Additional circle in the row
-
-                        ],
-                      ),
-
-                      SizedBox(height: 8),
-                      Center(
-                          child: Container(
-                        height: 240,
-                        width: 240,
-                        child: CircularPercentIndicator(
-                          animation: true,
-                          animationDuration: 1000,
-                          radius: 120,
-                          lineWidth: 20,
-                          percent: (product.nutriscoreScoreOutOf100 ?? 0)
-                                  .toDouble() /
-                              100,
-                          center: Image.memory(
-                            byte, // Assuming 'byte' is a Uint8List
-                            height: 160,
-                            width: 160,
-                          ),
-                          backgroundColor: Color(0xffD70404),
-                          progressColor: Color(0xff5CB287),
-                          circularStrokeCap: CircularStrokeCap.round,
-                        ),
-                      )),
-                      SizedBox(
-                        height: 10,
-                      ), // Add some space between the circular indicator and the percentage
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${product.nutriscoreScoreOutOf100 ?? 0}%', // Display the percentage
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                              width:
-                                  10), // Add some space between the percentage and the image
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/approuver.png'), // Replace 'assets/small_image.png' with your image path
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // 'Ingredients' text on the left
-                          Text(
-                            'Nutritients:',
-                            style: TextStyle(
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'SF Pro Text',
-                            ),
-                          ),
-                          Spacer(),
-                          // Add space between 'Ingredients' and 'Details'
-                          // Container for 'Details' on the right
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              height: 30, // Adjust height as needed
-                              width: 100, // Adjust width as needed
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color:
-                                      Color(0xffECBE5C), // Specify border color
-                                  width: 3, // Adjust border width as needed
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                    15), // Add border radius for rounded corners
-                              ),
-
-                              child: Stack(
+                              // Row containing circles
+                              Row(
                                 children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(
-                                          2), // Adjust padding as needed
-                                      child: Text(
-                                        'Details', // Add 'Details' text
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontFamily: 'SF Pro Text',
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 30, top: 20),
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xffECBE5C),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 0, top: 0),
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xff5CB287),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 190,
+                                        top: 40), // Adjusted for simplicity
+                                    child: Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xffECBE5C),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
+                              // Positioned Text in the center with wrapping
+                              Positioned.fill(
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            50), // Increase padding to ensure text does not overlap with the circles too much
+                                    child: Text(
+                                      product.productName ?? 'No Name',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Harmonia Sans W01 Regular',
+                                      ),
+                                      softWrap: true,
+                                      overflow: TextOverflow
+                                          .fade, // Handles text overflow gracefully
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Additional circle in the row
+                            ],
                           ),
-                        ],
-                      ).animate().fade(duration: 550.ms).slideY(),
-                      // for (int i = 0; i < 20; i++)
-                      //   Text('Scrolling Test Text ${i + 1}', style: TextStyle(fontSize: 22)),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Column(
-                        children: [
+
+                          SizedBox(height: 8),
+                          Center(
+                              child: Container(
+                            height: 240,
+                            width: 240,
+                            child: CircularPercentIndicator(
+                              animation: true,
+                              animationDuration: 1000,
+                              radius: 120,
+                              lineWidth: 20,
+                              percent: (product.nutriscoreScoreOutOf100 ?? 0)
+                                      .toDouble() /
+                                  100,
+                              center: Image.memory(
+                                byte, // Assuming 'byte' is a Uint8List
+                                height: 160,
+                                width: 160,
+                              ),
+                              backgroundColor: Color(0xffD70404),
+                              progressColor: Color(0xff5CB287),
+                              circularStrokeCap: CircularStrokeCap.round,
+                            ),
+                          )),
+                          SizedBox(
+                            height: 10,
+                          ), // Add some space between the circular indicator and the percentage
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${product.nutriscoreScoreOutOf100 ?? 0}%', // Display the percentage
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                  width:
+                                      10), // Add some space between the percentage and the image
+                              Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/approuver.png'), // Replace 'assets/small_image.png' with your image path
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // 'Ingredients' text on the left
+                              Text(
+                                'Nutritients:',
+                                style: TextStyle(
+                                  fontSize: 23,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'SF Pro Text',
+                                ),
+                              ),
+                              Spacer(),
+                              // Add space between 'Ingredients' and 'Details'
+                              // Container for 'Details' on the right
+                              GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  height: 30, // Adjust height as needed
+                                  width: 100, // Adjust width as needed
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color(
+                                          0xffECBE5C), // Specify border color
+                                      width: 3, // Adjust border width as needed
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                        15), // Add border radius for rounded corners
+                                  ),
+
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(
+                                              2), // Adjust padding as needed
+                                          child: Text(
+                                            'Details', // Add 'Details' text
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontFamily: 'SF Pro Text',
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ).animate().fade(duration: 550.ms).slideY(),
+                          // for (int i = 0; i < 20; i++)
+                          //   Text('Scrolling Test Text ${i + 1}', style: TextStyle(fontSize: 22)),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Color(0xffD9D9D9).withOpacity(0.5),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 6),
+                                          child: Text(
+                                            'energyKcal',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                              fontFamily: 'SF Pro Text',
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 6),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 7,
+                                                height: 7,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Color(
+                                                      0xffF1755B), // Adjust color as needed
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      4), // Adjust spacing as needed
+                                              Text(
+                                                'Value: ${product.energyKcal100g}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Spacer(),
+
+                                    Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Details1(); // Show ProductDetailsDialog as a dialog
+                                            },
+                                          );
+                                        },
+                                        child: Icon(Icons.info,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                    // Add more widgets as needed
+                                  ],
+                                ),
+                              ).animate().fade(duration: 550.ms).slideY(),
+                            ],
+                          ),
+                          SizedBox(
+                              height: 10), // Add space between the containers
+
+                          // Second Container (Copy and paste the first Container code here)
                           Container(
                             padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
@@ -378,14 +462,14 @@ class _ProductPageState extends State<ProductPage> {
                               color: Color(0xffD9D9D9).withOpacity(0.5),
                             ),
                             child: Row(
-                              children: [
+                              children: <Widget>[
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                  children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'energyKcal',
+                                        'Fibers',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -404,14 +488,14 @@ class _ProductPageState extends State<ProductPage> {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Color(
-                                                  0xffF1755B), // Adjust color as needed
+                                                  0xff5CB287), // Adjust color as needed
                                             ),
                                           ),
                                           SizedBox(
                                               width:
                                                   4), // Adjust spacing as needed
                                           Text(
-                                            'Value: ${product.energyKcal100g}',
+                                            'Value: ${product.fiber100g}',
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.black87,
@@ -423,7 +507,6 @@ class _ProductPageState extends State<ProductPage> {
                                   ],
                                 ),
                                 Spacer(),
-
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: GestureDetector(
@@ -431,151 +514,77 @@ class _ProductPageState extends State<ProductPage> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return Details1(); // Show ProductDetailsDialog as a dialog
+                                          return Details2(); // Show ProductDetailsDialog as a dialog
                                         },
                                       );
                                     },
                                     child: Icon(Icons.info, color: Colors.grey),
                                   ),
                                 ),
-                                // Add more widgets as needed
                               ],
                             ),
                           ).animate().fade(duration: 550.ms).slideY(),
-                        ],
-                      ),
-                      SizedBox(height: 10), // Add space between the containers
-
-                      // Second Container (Copy and paste the first Container code here)
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(0xffD9D9D9).withOpacity(0.5),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(left: 6),
-                                  child: Text(
-                                    'Fibers',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontFamily: 'SF Pro Text',
+                          SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 80.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: ExpansionTile(
+                                tilePadding:
+                                    EdgeInsets.only(left: 10, right: 17),
+                                expandedCrossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                collapsedTextColor: Colors.black,
+                                collapsedBackgroundColor:
+                                    Color(0xffD9D9D9).withOpacity(0.5),
+                                backgroundColor:
+                                    Color(0xffD9D9D9).withOpacity(0.5),
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Other nutrients',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontFamily: 'SF Pro Text',
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 6),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 7,
-                                        height: 7,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(
-                                              0xff5CB287), // Adjust color as needed
-                                        ),
+                                    Text(
+                                      'Allergens and more..',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
                                       ),
-                                      SizedBox(
-                                          width: 4), // Adjust spacing as needed
-                                      Text(
-                                        'Value: ${product.fiber100g}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            Padding(
-                              padding: EdgeInsets.all(15),
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Details2(); // Show ProductDetailsDialog as a dialog
-                                    },
-                                  );
-                                },
-                                child: Icon(Icons.info, color: Colors.grey),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ).animate().fade(duration: 550.ms).slideY(),
-                      SizedBox(height: 10),
-                       Padding(
-                       padding: const EdgeInsets.only( bottom: 80.0),
-                       child:ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: ExpansionTile(
-                          tilePadding: EdgeInsets.only(left: 10, right: 17),
-                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                          collapsedTextColor: Colors.black,
-                          collapsedBackgroundColor:
-                              Color(0xffD9D9D9).withOpacity(0.5),
-                          backgroundColor: Color(0xffD9D9D9).withOpacity(0.5),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Other nutrients',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontFamily: 'SF Pro Text',
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                'Allergens and more..',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
+                                children: nutrientMap.entries
+                                    .map((entry) =>
+                                        buildInfoRow(entry.key, entry.value))
+                                    .toList(),
+                              ).animate().fade(duration: 550.ms).slideY(),
+                            ),
                           ),
-                          children: nutrientMap.entries
-                              .map((entry) =>
-                                  buildInfoRow(entry.key, entry.value))
-                              .toList(),
-                        ).animate().fade(duration: 550.ms).slideY(),
-                      ),
+                        ],
+                      );
+                    } else {
+                      return Text("No product data available");
+                    }
+                  },
                 ),
-
-
-                    ],
-
-                  );
-                } else {
-                  return Text("No product data available");
-                }
-              },
+              ),
             ),
           ),
-        ),
-      ),
-            MyDraggableSheet(
-                child: Alternative( productId : widget.productId )), // Ajouter ici le widget Alternative
-
-          ],
+          MyDraggableSheet(
+              child: Alternative(
+                  productId:
+                      widget.productId)), // Ajouter ici le widget Alternative
+        ],
       ),
     );
   }
-
 
   void toggleFavorite() async {
     // Toggle the state of favorite
@@ -584,7 +593,8 @@ class _ProductPageState extends State<ProductPage> {
     });
 
     // Send the HTTP request
-    String url = 'http://192.168.1.15:9000/favorites/${widget.email}/${widget.productId}/';
+    String url =
+        'http://192.168.1.15:9000/favorites/${widget.email}/${widget.productId}/';
     var response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -595,7 +605,8 @@ class _ProductPageState extends State<ProductPage> {
       // then handle the error or revert the favorite status
       print('Failed to update favorite');
       setState(() {
-        isFavorite = !isFavorite; // Revert the favorite status if the request failed
+        isFavorite =
+            !isFavorite; // Revert the favorite status if the request failed
       });
     }
   }
@@ -636,15 +647,12 @@ Widget buildInfoRow(String title, dynamic value) {
         ],
       ),
     ],
-
   );
 }
 
 class Alternative extends StatelessWidget {
   final int productId;
   const Alternative({Key? key, required this.productId}) : super(key: key);
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -667,7 +675,8 @@ class Alternative extends StatelessWidget {
                   BottomSheetDummyUI(
                     content: product['product_name'],
                     img: product['background_removed_image'],
-                    score: product['nutriscore_score_out_of_100'], // Add the 'score' parameter here
+                    score: product[
+                        'nutriscore_score_out_of_100'], // Add the 'score' parameter here
                   ),
               ],
             ),
@@ -679,8 +688,8 @@ class Alternative extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> fetchData() async {
     try {
-      final response = await http.get(Uri.parse(
-          'http://192.168.1.15:9000/alternatives/food/$productId/'));
+      final response = await http.get(
+          Uri.parse('http://192.168.1.15:9000/alternatives/food/$productId/'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)['Alternatives'];
@@ -730,8 +739,6 @@ class BottomSheetDummyUI extends StatelessWidget {
                         base64Decode(img),
                         width: 100,
                         height: 100,
-
-
                       )
                     : Container(), // Display an empty container if image data is empty
               ),

@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_application_2/CommunityDiscussionPage.dart';
 import 'package:flutter_application_2/Favorites.dart';
+import 'package:flutter_application_2/chatbot.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'ProfilePage.dart';
+
 import 'dart:async'; // Added for using Future
 import 'CommunityDiscussionPage.dart';
 import 'chatbot.dart';
+
 import 'scan.dart';
 import 'second_page.dart';
 
 class Community extends StatefulWidget {
   final String email;
 
-  const Community({Key? key, required this.email}) : super(key: key);
+  const Community({super.key, required this.email});
 
   @override
   _CommunityState createState() => _CommunityState();
@@ -45,12 +47,10 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
-
+ 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
@@ -68,9 +68,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchUserCommunities() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_user_communities/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_communities/'),
         body: {'email': widget.email},
       );
 
@@ -90,9 +88,7 @@ class _CommunityState extends State<Community> {
   Future<void> _fetchCommunitiesNotUserExists() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/get_communities_not_user_exists/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_communities_not_user_exists/'),
         body: {'email': widget.email},
       );
 
@@ -113,9 +109,7 @@ class _CommunityState extends State<Community> {
   Future<void> _addEmailToCommunity(String communityName) async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.15:9000/add_email_to_community/'),
-
+        Uri.parse('http://192.168.1.16:9000/add_email_to_community/'),
         body: {'community_name': communityName, 'email': widget.email},
       );
 
@@ -140,15 +134,15 @@ class _CommunityState extends State<Community> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xFFFDF6EC),
+        color: const Color(0xFFFDF6EC),
         child: Stack(
           children: [
             Container(
-              color: Color(0xFFFDF6EC),
-              child: Align(
+              color: const Color(0xFFFDF6EC),
+              child: const Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 16.0),
+                  padding: EdgeInsets.only(top: 100, left: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -185,7 +179,7 @@ class _CommunityState extends State<Community> {
                 children: [
                   buildSectionTitle('Socials'),
                   buildScrollableItemList(userCommunities, false),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildSectionTitle('Discover More'),
                   buildScrollableItemList(discoverMoreItems, true),
                 ],
@@ -215,6 +209,21 @@ class _CommunityState extends State<Community> {
         animationDuration: Duration(milliseconds: 250),
         index: _activeIndex,
         items: <Widget>[
+
+           GestureDetector(
+             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Chatbot()),
+              );
+            },
+         child :  SizedBox(
+            width: 30,
+            height: 30,
+            child: Image.asset('assets/images/robot.png'),
+          ),),
+          const Icon(Icons.favorite),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -222,7 +231,7 @@ class _CommunityState extends State<Community> {
               });
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => chatbot()),
+                MaterialPageRoute(builder: (context) => Chatbot()),
               );
             },
             child: Container(
@@ -253,12 +262,13 @@ class _CommunityState extends State<Community> {
                 MaterialPageRoute(builder: (context) => ScanApp(email: widget.email)),
               );
             },
-            child: Container(
+            child: SizedBox(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/code-barres-lu.png'),
             ),
           ),
+          const Icon(Icons.home),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -281,7 +291,7 @@ class _CommunityState extends State<Community> {
                 MaterialPageRoute(builder: (context) => Community(email: widget.email)),
               );
             },
-            child: Container(
+            child: SizedBox(
               width: 30,
               height: 30,
               child: Image.asset('assets/images/amis.png'),
@@ -301,7 +311,7 @@ class _CommunityState extends State<Community> {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -310,7 +320,7 @@ class _CommunityState extends State<Community> {
             ),
           ],
         ),
-        Divider(
+        const Divider(
           color: Color(0xFF5CB287), // Adjust color as needed
           thickness: 2, // Adjust thickness as needed
         ),
@@ -319,19 +329,19 @@ class _CommunityState extends State<Community> {
   }
 
   Widget buildScrollableItemList(List<String> items, bool isDiscoverMore) {
-    return Container(
+    return SizedBox(
       height: 240, // Limit the height to show only up to 4 items
       child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: items.map((item) {
             return Container(
               height: 55,
               width: 380,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              margin: EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 0.35),
+                color: const Color.fromRGBO(217, 217, 217, 0.35),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -339,7 +349,7 @@ class _CommunityState extends State<Community> {
                 children: [
                   Text(
                     item,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,

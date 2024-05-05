@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'Details1.dart';
-import 'Details2.dart';
 import 'package:flutter_application_2/product_page_c.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
@@ -17,8 +12,7 @@ class ProductPageforScan extends StatefulWidget {
   final int productId;
 
   const ProductPageforScan(
-      {Key? key, required this.email, required this.productId})
-      : super(key: key);
+      {super.key, required this.email, required this.productId});
 
   @override
   _ProductPageforScanState createState() => _ProductPageforScanState();
@@ -37,8 +31,7 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
   Future<void> _fetchUserProfile() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
-
+        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
@@ -61,23 +54,23 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFDF6EC),
+      backgroundColor: const Color(0xffFDF6EC),
       appBar: PreferredSize(
         preferredSize:
-            Size.fromHeight(47), // Adjust the preferred height as needed
+            const Size.fromHeight(47), // Adjust the preferred height as needed
         child: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: Container(
             width: 47,
             height: 47,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xFFECBE5C),
               shape: BoxShape.circle,
             ),
-            margin: EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -87,13 +80,13 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
             Container(
               width: 47,
               height: 47,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFFECBE5C),
                 shape: BoxShape.circle,
               ),
-              margin: EdgeInsets.only(right: 10),
+              margin: const EdgeInsets.only(right: 10),
               child: IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white),
+                icon: const Icon(Icons.favorite, color: Colors.white),
                 onPressed: () {
                   // Add your favorite functionality here
                 },
@@ -112,7 +105,7 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // Show loading spinner when waiting for data
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   // Handle error by navigating to another page
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -125,7 +118,7 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
                     );
                   });
                   // Return a placeholder or empty container/widget until the frame callback executes
-                  return Center(child: Text('Loading error, redirecting...'));
+                  return const Center(child: Text('Loading error, redirecting...'));
                 } else if (snapshot.hasData) {
                   // When data is received, process it and display your content
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -139,7 +132,7 @@ class _ProductPageforScanState extends State<ProductPageforScan> {
                   });
                 }
                 // Return a default widget if none of the conditions are met
-                return SizedBox(); // or any other widget you want to return
+                return const SizedBox(); // or any other widget you want to return
               },
             ),
           ),
