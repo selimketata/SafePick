@@ -95,7 +95,6 @@ class _SearchResultsPageCState extends State<SearchResultsPageC> {
                         product.backgroundImage,
                         width: 50,
                         height: 50,
-                        fit: BoxFit.cover,
                       ),
                     ),
                     title: Text(product.productName),

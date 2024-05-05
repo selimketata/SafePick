@@ -1454,6 +1454,7 @@ def content_based_recommendation(request, email):
                 'nutriscore_score_out_of_100': product.get('nutriscore_score_out_of_100', -1),
                 'background_removed_image': product.get('background_removed_image', '')
             })
+
     products = [serialize_doc(product) for product in product_details]
 
 
@@ -1477,14 +1478,18 @@ def content_based_recommendation_c(request, email):
     # Fetch details from the food collection for each product code
     product_details = []
     for code in product_codes:
-        product = db['cosmetics'].find_one({'code': int(code)}, {'product_name': 1, 'score': 1, 'background_removed_image': 1})
+        product = db['cosmetics'].find_one({'code': code}, {'product_name': 1, 'score': 1, 'background_removed_image': 1})
         if product:
             product_details.append({
                 'product_name': product.get('product_name', ''),
-                'score': product.get('nutriscore_score_out_of_100', -1),
-                'background_removed_image': product.get('background_removed_image', '')
+                'score': product.get('score', -1),
+                'background_removed_image': product.get('background_removed_image', ''),
+                'code': int(product.get('code', '0'))
             })
-    products = [serialize_doc(product) for product in product_details]
+    productsc = [serialize_doc_2(product) for product in product_details]
+
+
+    products = [serialize_doc(product) for product in productsc]
 
 
     # Return the product details as JSON
@@ -1530,7 +1535,9 @@ def dynamic_collection_api_c(request):
     if query:
         search_results = list(collection.find({"product_name": {"$regex": query, "$options": "i"}}))
         client.close()  # Important to close the connection
-        products = [serialize_doc(product) for product in search_results]
+        productss = [serialize_doc_2(product) for product in search_results]
+
+        products = [serialize_doc(product) for product in productss]
 
 
         # You would still need to serialize the data here manually
