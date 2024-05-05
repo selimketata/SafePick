@@ -230,7 +230,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   }
 
   Future<void> _sendMessage(String text) async {
-    const url = 'http://192.168.1.16:9000/create_message/';
+    const url = 'http://192.168.1.15:9000/create_message/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -249,7 +249,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
   }
 
   Future<String> _fetchUserProfile(String email) async {
-    const url = 'http://192.168.1.16:9000/get_user_profile/';
+    const url = 'http://192.168.1.15:9000/get_user_profile/';
     final response = await http.post(
       Uri.parse(url),
       body: {
@@ -292,7 +292,7 @@ class _CommunityDiscussionPageState extends State<CommunityDiscussionPage> {
 
   Future<void> _searchMessages(String searchTerm) async {
     final response = await http.post(
-      Uri.parse('http://192.168.1.16:9000/search_messages_in_community/'),
+      Uri.parse('http://192.168.1.15:9000/search_messages_in_community/'),
       body: {
         'community_name': widget.communityName,
         'search_term': searchTerm,

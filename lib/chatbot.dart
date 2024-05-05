@@ -28,7 +28,7 @@ class _ChatbotState extends State<Chatbot> {
   }
 
 Future<void> sendQuery(String query) async {
-  var url = 'http://192.168.1.16:5000/query';
+  var url = 'http://192.168.1.15:5000/query';
   var response = await http.post(
     Uri.parse(url),
     headers: {'Content-Type': 'application/json'},

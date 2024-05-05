@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/MainPage_F.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'MainPage_C.dart';
@@ -43,20 +44,20 @@ class _SecondPageState extends State<SecondPage> {
       () => Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => Chatbot())),
       () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Community(email: widget.email))),
+          builder: (context) => mainpagef(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) =>  mainpagec(email: widget.email))),
+          .push(MaterialPageRoute(builder: (context) =>  mainpagef(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Chatbot())),
+          .push(MaterialPageRoute(builder: (context) => mainpagef(email: widget.email))),
       () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Chatbot())),
+          .push(MaterialPageRoute(builder: (context) => mainpagef(email: widget.email))),
     ];
   }
 
   Future<void> _fetchUserPhoto() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.16:9000/get_user_profile/'),
+        Uri.parse('http://192.168.1.15:9000/get_user_profile/'),
         body: {'email': widget.email},
       );
 
