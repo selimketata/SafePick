@@ -10,7 +10,9 @@ function Sidebar() {
         <img src={logo}></img>
         <h1>Safepick</h1>
         <div className='pageslist'>
-            <Link to="/product" classname="page"><div>Products</div></Link>
+            <Link to="/food" classname="page"><div>Foods</div></Link>
+            <hr></hr>
+            <Link to="/cosmetic" classname="page"><div>Cosmetics</div></Link>
             <hr></hr>
             <Link to="/user"><div>Users</div></Link>
             <hr></hr>
@@ -19,7 +21,6 @@ function Sidebar() {
             <Link to="/notification"><div>Notifications</div></Link>
             <hr></hr>
             <Link to="/login"><div>Logout</div></Link>
-            <hr></hr>
         </div>
       </div>
     );

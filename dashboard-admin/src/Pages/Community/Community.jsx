@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 // Définir l'URL de base
-const BASE_URL = 'http://192.168.1.69:8000';
+const BASE_URL = 'http://192.168.1.2:8000';
 
 function CommunityDashboard() {
   const [communities, setCommunities] = useState([]);
